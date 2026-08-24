@@ -1,0 +1,43 @@
+diff --git a/apps/api/package.json b/apps/api/package.json
+--- a/apps/api/package.json
++++ b/apps/api/package.json
+@@ -20,6 +20,5 @@
+     "argon2": "0.41.1",
+     "bcryptjs": "2.4.3",
+-    "dotenv": "16.4.7",
+     "drizzle-orm": "0.36.4",
+     "fastify": "4.28.1",
+     "pg": "8.13.1",
+diff --git a/apps/api/src/config/env.ts b/apps/api/src/config/env.ts
+--- a/apps/api/src/config/env.ts
++++ b/apps/api/src/config/env.ts
+@@ -1,8 +1,4 @@
+-import dotenv from "dotenv";
+ import { z } from "zod";
+-
+-const envFile = process.env.TCRMHC_ENV_FILE ?? "/etc/tcrmhc/tcrmhc.env";
+-dotenv.config({ path: envFile });
+ 
+ const schema = z.object({
+   NODE_ENV: z.enum(["development", "test", "production"]).default("production"),
+diff --git a/infra/pm2/tcrmhc-api.config.cjs b/infra/pm2/tcrmhc-api.config.cjs
+--- a/infra/pm2/tcrmhc-api.config.cjs
++++ b/infra/pm2/tcrmhc-api.config.cjs
+@@ -5,6 +5,7 @@
+       cwd: "/var/www/TCRMHC/apps/api",
+       script: "dist/server.js",
+       interpreter: "node",
++      node_args: "--env-file=/etc/tcrmhc/tcrmhc.env",
+       instances: 1,
+       exec_mode: "fork",
+       autorestart: true,
+@@ -15,8 +16,7 @@
+       uid: "tcrmhc",
+       gid: "tcrmhc",
+       env: {
+-        NODE_ENV: "production",
+-        TCRMHC_ENV_FILE: "/etc/tcrmhc/tcrmhc.env"
++        NODE_ENV: "production"
+       }
+     }
+   ]

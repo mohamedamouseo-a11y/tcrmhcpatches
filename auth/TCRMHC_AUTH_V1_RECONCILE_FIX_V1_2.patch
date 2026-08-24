@@ -1,0 +1,104 @@
+diff --git a/scripts/tcrmhc-auth-v1-v1_2-reconcile.mjs b/scripts/tcrmhc-auth-v1-v1_2-reconcile.mjs
+new file mode 100644
+index 0000000..1cf4de1
+--- /dev/null
++++ b/scripts/tcrmhc-auth-v1-v1_2-reconcile.mjs
+@@ -0,0 +1,98 @@
++import { readFile, writeFile, unlink } from 'node:fs/promises';
++import { fileURLToPath } from 'node:url';
++import path from 'node:path';
++
++const root = process.cwd();
++
++async function read(rel) {
++  return readFile(path.join(root, rel), 'utf8');
++}
++
++async function write(rel, content) {
++  await writeFile(path.join(root, rel), content, 'utf8');
++}
++
++function replaceRequired(content, oldText, newText, label) {
++  if (content.includes(newText)) return { content, changed: false };
++  if (!content.includes(oldText)) {
++    throw new Error(`RECONCILE_FAIL ${label}: neither expected old nor already-fixed form was found`);
++  }
++  return { content: content.replace(oldText, newText), changed: true };
++}
++
++async function fixPasswordService() {
++  const rel = 'apps/api/src/modules/auth/password.service.ts';
++  let content = await read(rel);
++  const result = replaceRequired(
++    content,
++    'if (scheme === "argon2id") return argon2.verify(hash, password, ARGON2_OPTIONS);',
++    'if (scheme === "argon2id") return argon2.verify(hash, password);',
++    rel
++  );
++  if (result.changed) await write(rel, result.content);
++  return result.changed;
++}
++
++async function fixSessionService() {
++  const rel = 'apps/api/src/modules/auth/session.service.ts';
++  let content = await read(rel);
++  const result = replaceRequired(
++    content,
++    'userAgent: input.request.headers["user-agent"]?.slice(0, 512)',
++    'userAgent: input.request.headers["user-agent"]?.slice(0, 512) ?? null',
++    rel
++  );
++  if (result.changed) await write(rel, result.content);
++  return result.changed;
++}
++
++async function fixSecurityEvents() {
++  const rel = 'apps/api/src/modules/security/security-events.ts';
++  let content = await read(rel);
++  const pairs = [
++    ['actorUserId: input.actorUserId,', 'actorUserId: input.actorUserId ?? null,'],
++    ['tenantId: input.tenantId,', 'tenantId: input.tenantId ?? null,'],
++    ['subjectHash: input.subjectHash,', 'subjectHash: input.subjectHash ?? null,'],
++    ['ipHash,', 'ipHash: ipHash ?? null,'],
++    ['requestId: input.request?.id,', 'requestId: input.request?.id ?? null,']
++  ];
++  let changed = false;
++  for (const [oldText, newText] of pairs) {
++    const result = replaceRequired(content, oldText, newText, `${rel} :: ${oldText}`);
++    content = result.content;
++    changed ||= result.changed;
++  }
++  if (changed) await write(rel, content);
++  return changed;
++}
++
++async function fixWorkspace() {
++  const rel = 'pnpm-workspace.yaml';
++  let content = await read(rel);
++  if (/^onlyBuiltDependencies:\s*\n(?:[ \t]+-\s*[^\n]+\n?)*[ \t]+-\s*argon2\s*$/m.test(content)) {
++    return false;
++  }
++  if (/^onlyBuiltDependencies:\s*$/m.test(content)) {
++    content = content.replace(/^onlyBuiltDependencies:\s*$/m, 'onlyBuiltDependencies:\n  - argon2');
++  } else {
++    if (!content.endsWith('\n')) content += '\n';
++    content += '\nonlyBuiltDependencies:\n  - argon2\n';
++  }
++  await write(rel, content);
++  return true;
++}
++
++const results = [];
++results.push(['password.service.ts', await fixPasswordService()]);
++results.push(['session.service.ts', await fixSessionService()]);
++results.push(['security-events.ts', await fixSecurityEvents()]);
++results.push(['pnpm-workspace.yaml', await fixWorkspace()]);
++
++for (const [name, changed] of results) {
++  console.log(`${changed ? 'FIXED' : 'ALREADY_OK'} ${name}`);
++}
++console.log('RECONCILE_OK');
++
++// Remove the one-shot helper so only the intended source/config changes remain.
++const self = fileURLToPath(import.meta.url);
++await unlink(self);

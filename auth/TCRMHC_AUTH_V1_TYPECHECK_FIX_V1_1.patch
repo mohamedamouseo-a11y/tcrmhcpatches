@@ -1,0 +1,53 @@
+diff --git a/apps/api/src/modules/auth/password.service.ts b/apps/api/src/modules/auth/password.service.ts
+--- a/apps/api/src/modules/auth/password.service.ts
++++ b/apps/api/src/modules/auth/password.service.ts
+@@ -19,7 +19,7 @@
+   hash: string,
+   scheme: PasswordScheme
+ ): Promise<boolean> {
+-  if (scheme === "argon2id") return argon2.verify(hash, password, ARGON2_OPTIONS);
++  if (scheme === "argon2id") return argon2.verify(hash, password);
+   if (scheme === "bcrypt") return bcrypt.compare(password, hash);
+   return false;
+ }
+diff --git a/apps/api/src/modules/auth/session.service.ts b/apps/api/src/modules/auth/session.service.ts
+--- a/apps/api/src/modules/auth/session.service.ts
++++ b/apps/api/src/modules/auth/session.service.ts
+@@ -30,7 +30,7 @@
+     idleExpiresAt,
+     absoluteExpiresAt,
+     ipHash: hashIp(input.request.ip),
+-    userAgent: input.request.headers["user-agent"]?.slice(0, 512)
++    userAgent: input.request.headers["user-agent"]?.slice(0, 512) ?? null
+   });
+ 
+   input.reply.setCookie(SESSION_COOKIE, token, {
+diff --git a/apps/api/src/modules/security/security-events.ts b/apps/api/src/modules/security/security-events.ts
+--- a/apps/api/src/modules/security/security-events.ts
++++ b/apps/api/src/modules/security/security-events.ts
+@@ -34,11 +34,11 @@
+   await db.insert(securityEvents).values({
+     eventType: input.eventType,
+     outcome: input.outcome,
+-    actorUserId: input.actorUserId,
+-    tenantId: input.tenantId,
+-    subjectHash: input.subjectHash,
+-    ipHash,
+-    requestId: input.request?.id,
++    actorUserId: input.actorUserId ?? null,
++    tenantId: input.tenantId ?? null,
++    subjectHash: input.subjectHash ?? null,
++    ipHash: ipHash ?? null,
++    requestId: input.request?.id ?? null,
+     metadata: input.metadata ?? {}
+   });
+ }
+diff --git a/pnpm-workspace.yaml b/pnpm-workspace.yaml
+--- a/pnpm-workspace.yaml
++++ b/pnpm-workspace.yaml
+@@ -1,2 +1,5 @@
+ packages:
+   - apps/*
++
++onlyBuiltDependencies:
++  - argon2

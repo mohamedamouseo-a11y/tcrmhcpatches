@@ -1,0 +1,59 @@
+TCRMHC Phase 2 Super Admin Portal Foundation V2.0.1 — packaging repair
+
+Purpose:
+This V2.0.1 artifact replaces the corrupted/truncated V2.0 monolithic .patch.gz.b64 package. The decoded patch content is unchanged from the approved V2.0 patch.
+
+Artifact parts, concatenate in lexical order:
+TCRMHC_PHASE2_SUPERADMIN_FOUNDATION_V2_0_1.patch.gz.b64.part00
+TCRMHC_PHASE2_SUPERADMIN_FOUNDATION_V2_0_1.patch.gz.b64.part01
+TCRMHC_PHASE2_SUPERADMIN_FOUNDATION_V2_0_1.patch.gz.b64.part02
+TCRMHC_PHASE2_SUPERADMIN_FOUNDATION_V2_0_1.patch.gz.b64.part03
+TCRMHC_PHASE2_SUPERADMIN_FOUNDATION_V2_0_1.patch.gz.b64.part04
+TCRMHC_PHASE2_SUPERADMIN_FOUNDATION_V2_0_1.patch.gz.b64.part05
+TCRMHC_PHASE2_SUPERADMIN_FOUNDATION_V2_0_1.patch.gz.b64.part06
+TCRMHC_PHASE2_SUPERADMIN_FOUNDATION_V2_0_1.patch.gz.b64.part07
+TCRMHC_PHASE2_SUPERADMIN_FOUNDATION_V2_0_1.patch.gz.b64.part08
+TCRMHC_PHASE2_SUPERADMIN_FOUNDATION_V2_0_1.patch.gz.b64.part09
+TCRMHC_PHASE2_SUPERADMIN_FOUNDATION_V2_0_1.patch.gz.b64.part10
+TCRMHC_PHASE2_SUPERADMIN_FOUNDATION_V2_0_1.patch.gz.b64.part11
+
+Part SHA-256 values:
+part00 f13a527d040ddec7adb3bbb965f68a492d40f9f1f6068a389c6ca52ae4f1a9ad
+part01 b774d239607b8dc816dbbb3e0246d0d4bf2c5762b6943161f3f1eea413ecc175
+part02 1d6d91bd5b74850a81520bdd6b3e0427d1d10e9678ec64db303ffec0bfb76331
+part03 e0d562e846c8c86c002c81af511a7b9ea8c5500e8e12b80e4bfd3ffb4875fa15
+part04 88e4bfd73da42e00bddc5a14872513e29e9011729c7c5ea9066327b81a050603
+part05 832b68247738f656105fc67950c6d48b84dc3e25800b4c7ccc41aec30077f992
+part06 984b7a9073bac9e516795522ea008d19ed3a300aa38e584b2276ba3e6cac15fd
+part07 06c3bc2f2314bd46af6090c4004251628215d8ad2bb3f2b12bc903142ea548e2
+part08 cfa3fb60b3a10638979ebf5e31eb25579399ff42183a74ed52c0320f78c45621
+part09 008c7f3fa9db712e732e72cde9fef655a547b9e55fda45a2469f4b52c568c8bb
+part10 3ce9ea51f86f986f309549aa89f2dbd2a34405eb43cc39850c7a75e9254bb814
+part11 ee81ee9f38e1ef81f224dc5b143994c3f055cedbb05d354ba6a29a7efa6303f9
+
+Reassembled base64 SHA-256:
+4907344755d4166332b0605c11fef720abdaa9642ed5528b3a609e04263e04e6
+
+Compressed gzip SHA-256:
+6d2d266057e1df83750ee4152dc14318b84dc489de3cfaad3bb77a63fda9efbc
+
+Decoded patch SHA-256:
+99a694ef364b8388bc5bae50a8fe367ed637b17381aae7c7637563806bbb5535
+
+Decode procedure from this directory:
+cat TCRMHC_PHASE2_SUPERADMIN_FOUNDATION_V2_0_1.patch.gz.b64.part* > /tmp/TCRMHC_PHASE2_SUPERADMIN_FOUNDATION_V2_0_1.patch.gz.b64
+base64 -d /tmp/TCRMHC_PHASE2_SUPERADMIN_FOUNDATION_V2_0_1.patch.gz.b64 > /tmp/TCRMHC_PHASE2_SUPERADMIN_FOUNDATION_V2_0_1.patch.gz
+gzip -dc /tmp/TCRMHC_PHASE2_SUPERADMIN_FOUNDATION_V2_0_1.patch.gz > /tmp/TCRMHC_PHASE2_SUPERADMIN_FOUNDATION_V2_0_1.patch
+
+Patch scope:
+- Phase 2 database migration 0001_phase2_portal.sql
+- tenant code field
+- tenant-scoped positions
+- membership position reference
+- tenant roles TENANT_ADMIN / HELP_EDITOR / HELP_VIEWER
+- SUPERADMIN-only admin REST endpoints
+- dashboard, tenants, users, positions, sessions, security-events UI
+- Arabic/English responsive navy/gold admin shell
+
+Safety:
+No credentials, password hashes, DB credentials, environment values, session tokens, or API keys are included.

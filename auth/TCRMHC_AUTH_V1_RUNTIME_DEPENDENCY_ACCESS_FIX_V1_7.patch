@@ -35,8 +35,8 @@ index 0000000..a69c43b
 +
 +  # Runtime needs only traversal on directories and read access on files.
 +  # Do not grant group write permission to installed dependencies.
-+  find -L "$path" -type d -exec chmod g+rx {} +
-+  find -L "$path" -type f -exec chmod g+r {} +
++  find "$path" -type d -exec chmod g+rx {} +
++  find "$path" -type f -exec chmod g+r {} +
 +done
 +
 +echo "TCRMHC runtime dependency access prepared."

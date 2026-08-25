@@ -1,33 +1,16 @@
-TCRMHC Phase 2 Super Admin Portal Foundation V2.0
+DEPRECATED — DO NOT USE THIS V2.0 MONOLITHIC ARTIFACT
 
-Artifact:
+The original file:
 phase2/TCRMHC_PHASE2_SUPERADMIN_FOUNDATION_V2_0.patch.gz.b64
+was found truncated/corrupt during production verification and must not be decoded or applied.
 
-Decode and verify:
-1. sha256sum TCRMHC_PHASE2_SUPERADMIN_FOUNDATION_V2_0.patch.gz.b64
-2. base64 -d TCRMHC_PHASE2_SUPERADMIN_FOUNDATION_V2_0.patch.gz.b64 > /tmp/TCRMHC_PHASE2_SUPERADMIN_FOUNDATION_V2_0.patch.gz
-3. sha256sum /tmp/TCRMHC_PHASE2_SUPERADMIN_FOUNDATION_V2_0.patch.gz
-4. gzip -dc /tmp/TCRMHC_PHASE2_SUPERADMIN_FOUNDATION_V2_0.patch.gz > /tmp/TCRMHC_PHASE2_SUPERADMIN_FOUNDATION_V2_0.patch
-5. sha256sum /tmp/TCRMHC_PHASE2_SUPERADMIN_FOUNDATION_V2_0.patch
+Use the verified packaging repair instead:
+phase2/v2_0_1/TCRMHC_PHASE2_SUPERADMIN_FOUNDATION_V2_0_1.manifest.txt
 
-Base64 artifact SHA-256:
-02b7897e1b12428c5be30ce779fad8c0c8189a0ed5155e6d217d7522c4a80879
+The V2.0.1 package is split into numbered parts to prevent transport truncation. Concatenate the parts in lexical order, verify the manifest checksums, decode, then run git apply --check before any database migration or code change.
 
-Compressed gzip SHA-256:
-6d2d266057e1df83750ee4152dc14318b84dc489de3cfaad3bb77a63fda9efbc
-
-Decoded patch SHA-256:
+The decoded Phase 2 patch content remains SHA-256:
 99a694ef364b8388bc5bae50a8fe367ed637b17381aae7c7637563806bbb5535
 
-Patch scope:
-- Phase 2 database migration 0001_phase2_portal.sql
-- tenant code field
-- tenant-scoped positions
-- membership position reference
-- tenant roles TENANT_ADMIN / HELP_EDITOR / HELP_VIEWER
-- SUPERADMIN-only admin REST endpoints
-- dashboard, tenants, users, positions, sessions, security-events UI
-- Arabic/English responsive navy/gold admin shell
-
 Safety:
-No credentials, hashes, DB connection strings, environment values, session tokens, or API keys are included.
+No credentials, password hashes, DB credentials, environment values, session tokens, or API keys are included.

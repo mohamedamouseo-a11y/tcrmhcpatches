@@ -1,0 +1,23 @@
+TCRMHC Phase 2 API Exact Optional Property Types Repair V2.0.3
+
+Purpose:
+Fix the pre-migration TypeScript errors reported after V2.0.1 + V2.0.2 were successfully applied.
+
+Files changed:
+- apps/api/src/modules/admin/tenant.service.ts
+- apps/api/src/modules/admin/position.service.ts
+- apps/api/src/modules/admin/user-management.service.ts
+
+Fixes:
+- Align service input types with Zod-inferred optional properties under TypeScript exactOptionalPropertyTypes=true.
+- Allow explicit undefined only at optional API service boundaries for search/status/tenantId/code/positionId/update fields.
+- No route behavior, authorization logic, SQL behavior, migration content, or frontend behavior is changed.
+
+Patch SHA-256:
+cf1bd9f41078c6d74cd93a638ad48a3634f63e154be81a37812f69183964504b
+
+Apply target:
+A production worktree where Phase 2 V2.0.1 and V2.0.2 are already applied, with no Phase 2 migration run yet.
+
+Safety:
+No credentials, password hashes, DB values, environment values, session tokens, or API keys are included.

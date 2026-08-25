@@ -1,0 +1,36 @@
+diff --git a/apps/api/src/scripts/migrate.ts b/apps/api/src/scripts/migrate.ts
+index 4307a8e..fb022f3 100644
+--- a/apps/api/src/scripts/migrate.ts
++++ b/apps/api/src/scripts/migrate.ts
+@@ -1,15 +1,26 @@
+-import { readFile } from "node:fs/promises";
++import { readdir, readFile } from "node:fs/promises";
+ import { fileURLToPath } from "node:url";
+ import { dirname, resolve } from "node:path";
+ import { pool } from "../db/client.js";
+ 
+ const here = dirname(fileURLToPath(import.meta.url));
+-const migrationPath = resolve(here, "../db/migrations/0000_auth_v1.sql");
++const migrationsDirectory = resolve(here, "../db/migrations");
+ 
+ try {
+-  const sql = await readFile(migrationPath, "utf8");
+-  await pool.query(sql);
+-  console.log("Auth V1 migration completed.");
++  const migrationFiles = (await readdir(migrationsDirectory))
++    .filter((fileName) => /^\d+_.+\.sql$/.test(fileName))
++    .sort((left, right) => left.localeCompare(right));
++
++  if (migrationFiles.length === 0) {
++    throw new Error("No database migration files were found.");
++  }
++
++  for (const migrationFile of migrationFiles) {
++    const migrationPath = resolve(migrationsDirectory, migrationFile);
++    const sql = await readFile(migrationPath, "utf8");
++    await pool.query(sql);
++    console.log(`Migration completed: ${migrationFile}`);
++  }
+ } finally {
+   await pool.end();
+ }

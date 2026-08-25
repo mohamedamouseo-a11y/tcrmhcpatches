@@ -1,0 +1,88 @@
+diff --git a/apps/web/package.json b/apps/web/package.json
+index f5f043d..03fd0a4 100644
+--- a/apps/web/package.json
++++ b/apps/web/package.json
+@@ -5,7 +5,7 @@
+   "type": "module",
+   "scripts": {
+     "dev": "vite --host 127.0.0.1 --port 5173",
+-    "build": "vite build",
++    "build": "vite build && node scripts/copy-public-assets.mjs",
+     "typecheck": "tsc -p tsconfig.json --noEmit"
+   },
+   "dependencies": {
+diff --git a/apps/web/scripts/copy-public-assets.mjs b/apps/web/scripts/copy-public-assets.mjs
+new file mode 100644
+index 0000000..aaf4a9d
+--- /dev/null
++++ b/apps/web/scripts/copy-public-assets.mjs
+@@ -0,0 +1,18 @@
++import { cp, mkdir, stat } from "node:fs/promises";
++import { fileURLToPath } from "node:url";
++
++const sourceUrl = new URL("../../../public/assets/", import.meta.url);
++const destinationUrl = new URL("../dist/assets/", import.meta.url);
++
++const source = fileURLToPath(sourceUrl);
++const destination = fileURLToPath(destinationUrl);
++
++const sourceStats = await stat(source).catch(() => null);
++if (!sourceStats?.isDirectory()) {
++  throw new Error("TCRMHC public assets directory is missing");
++}
++
++await mkdir(destination, { recursive: true });
++await cp(source, destination, { recursive: true, force: true });
++
++console.log("TCRMHC public assets copied into the Vite dist tree.");
+diff --git a/infra/nginx/tcrmhc.locations.conf b/infra/nginx/tcrmhc.locations.conf
+index 0ef873c..8f929a1 100644
+--- a/infra/nginx/tcrmhc.locations.conf
++++ b/infra/nginx/tcrmhc.locations.conf
+@@ -1,8 +1,9 @@
+ # Merge ONLY these locations into the existing HTTPS server block for tcrmhc.tamiyouz.com.
+ # Keep the existing certificate, ACME challenge, server_name, and HTTP->HTTPS redirect unchanged.
++# Run scripts/prepare-web-static-access.sh after every production web build before reloading Nginx.
+ 
+ location ^~ /assets/ {
+-    alias /var/www/TCRMHC/public/assets/;
++    root /var/www/TCRMHC/apps/web/dist;
+     try_files $uri =404;
+     access_log off;
+     expires 7d;
+diff --git a/scripts/prepare-web-static-access.sh b/scripts/prepare-web-static-access.sh
+new file mode 100755
+index 0000000..248797b
+--- /dev/null
++++ b/scripts/prepare-web-static-access.sh
+@@ -0,0 +1,30 @@
++#!/usr/bin/env bash
++set -euo pipefail
++
++ROOT="${1:-/var/www/TCRMHC}"
++NGINX_USER="${2:-www-data}"
++DIST="$ROOT/apps/web/dist"
++
++if ! id "$NGINX_USER" >/dev/null 2>&1; then
++  echo "Nginx worker user does not exist: $NGINX_USER" >&2
++  exit 1
++fi
++
++if ! command -v setfacl >/dev/null 2>&1; then
++  echo "setfacl is required to grant least-privilege static-file access" >&2
++  exit 1
++fi
++
++if [[ ! -f "$DIST/index.html" || ! -d "$DIST/assets" ]]; then
++  echo "Built TCRMHC web dist is missing; run the web build first" >&2
++  exit 1
++fi
++
++for path in "$ROOT" "$ROOT/apps" "$ROOT/apps/web"; do
++  setfacl -m "u:${NGINX_USER}:--x" "$path"
++done
++
++setfacl -R -m "u:${NGINX_USER}:rX" "$DIST"
++setfacl -m "d:u:${NGINX_USER}:rX" "$DIST"
++
++echo "TCRMHC web static access prepared for the Nginx worker."

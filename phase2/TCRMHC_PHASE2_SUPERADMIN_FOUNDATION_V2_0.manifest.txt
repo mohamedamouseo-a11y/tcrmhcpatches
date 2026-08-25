@@ -3,14 +3,21 @@ TCRMHC Phase 2 Super Admin Portal Foundation V2.0
 Artifact:
 phase2/TCRMHC_PHASE2_SUPERADMIN_FOUNDATION_V2_0.patch.gz.b64
 
-Decode:
-base64 -d TCRMHC_PHASE2_SUPERADMIN_FOUNDATION_V2_0.patch.gz.b64 | gzip -d > /tmp/TCRMHC_PHASE2_SUPERADMIN_FOUNDATION_V2_0.patch
+Decode and verify:
+1. sha256sum TCRMHC_PHASE2_SUPERADMIN_FOUNDATION_V2_0.patch.gz.b64
+2. base64 -d TCRMHC_PHASE2_SUPERADMIN_FOUNDATION_V2_0.patch.gz.b64 > /tmp/TCRMHC_PHASE2_SUPERADMIN_FOUNDATION_V2_0.patch.gz
+3. sha256sum /tmp/TCRMHC_PHASE2_SUPERADMIN_FOUNDATION_V2_0.patch.gz
+4. gzip -dc /tmp/TCRMHC_PHASE2_SUPERADMIN_FOUNDATION_V2_0.patch.gz > /tmp/TCRMHC_PHASE2_SUPERADMIN_FOUNDATION_V2_0.patch
+5. sha256sum /tmp/TCRMHC_PHASE2_SUPERADMIN_FOUNDATION_V2_0.patch
+
+Base64 artifact SHA-256:
+02b7897e1b12428c5be30ce779fad8c0c8189a0ed5155e6d217d7522c4a80879
+
+Compressed gzip SHA-256:
+6d2d266057e1df83750ee4152dc14318b84dc489de3cfaad3bb77a63fda9efbc
 
 Decoded patch SHA-256:
 99a694ef364b8388bc5bae50a8fe367ed637b17381aae7c7637563806bbb5535
-
-Compressed payload SHA-256:
-7e7d40b669504725a6b46dbaeacc94f33842eb5d9bab8c52aa7e8f3e491d0fbf
 
 Patch scope:
 - Phase 2 database migration 0001_phase2_portal.sql

@@ -1,0 +1,26 @@
+TCRMHC Phase 2 Super Admin Portal Foundation V2.0
+
+Artifact:
+phase2/TCRMHC_PHASE2_SUPERADMIN_FOUNDATION_V2_0.patch.gz.b64
+
+Decode:
+base64 -d TCRMHC_PHASE2_SUPERADMIN_FOUNDATION_V2_0.patch.gz.b64 | gzip -d > /tmp/TCRMHC_PHASE2_SUPERADMIN_FOUNDATION_V2_0.patch
+
+Decoded patch SHA-256:
+9b472c561f2428d8ad8ae581818820ad4af70cf1b700d59d18d17c067d7ae0d7
+
+Compressed payload SHA-256:
+7e7d40b669504725a6b46dbaeacc94f33842eb5d9bab8c52aa7e8f3e491d0fbf
+
+Patch scope:
+- Phase 2 database migration 0001_phase2_portal.sql
+- tenant code field
+- tenant-scoped positions
+- membership position reference
+- tenant roles TENANT_ADMIN / HELP_EDITOR / HELP_VIEWER
+- SUPERADMIN-only admin REST endpoints
+- dashboard, tenants, users, positions, sessions, security-events UI
+- Arabic/English responsive navy/gold admin shell
+
+Safety:
+No credentials, hashes, DB connection strings, environment values, session tokens, or API keys are included.

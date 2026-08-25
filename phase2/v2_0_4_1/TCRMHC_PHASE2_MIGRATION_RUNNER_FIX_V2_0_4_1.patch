@@ -1,0 +1,60 @@
+diff --git a/apps/api/src/scripts/migrate.ts b/apps/api/src/scripts/migrate.ts
+index 4307a8e..6d1ab67 100644
+--- a/apps/api/src/scripts/migrate.ts
++++ b/apps/api/src/scripts/migrate.ts
+@@ -1,15 +1,52 @@
+-import { readFile } from "node:fs/promises";
++import { readdir, readFile } from "node:fs/promises";
+ import { fileURLToPath } from "node:url";
+ import { dirname, resolve } from "node:path";
+ import { pool } from "../db/client.js";
+ 
+ const here = dirname(fileURLToPath(import.meta.url));
+-const migrationPath = resolve(here, "../db/migrations/0000_auth_v1.sql");
++const migrationsDirectory = resolve(here, "../db/migrations");
++
++const client = await pool.connect();
+ 
+ try {
+-  const sql = await readFile(migrationPath, "utf8");
+-  await pool.query(sql);
+-  console.log("Auth V1 migration completed.");
++  await client.query(`
++    CREATE TABLE IF NOT EXISTS tcrmhc_schema_migrations (
++      filename text PRIMARY KEY,
++      applied_at timestamptz NOT NULL DEFAULT now()
++    )
++  `);
++
++  const migrationFiles = (await readdir(migrationsDirectory))
++    .filter((fileName) => /^\d+_.+\.sql$/.test(fileName))
++    .sort((left, right) => left.localeCompare(right));
++
++  if (migrationFiles.length === 0) {
++    throw new Error("No database migration files were found.");
++  }
++
++  const appliedResult = await client.query<{ filename: string }>(
++    "SELECT filename FROM tcrmhc_schema_migrations"
++  );
++  const appliedMigrations = new Set(appliedResult.rows.map((row) => row.filename));
++
++  for (const migrationFile of migrationFiles) {
++    if (appliedMigrations.has(migrationFile)) {
++      console.log(`Migration already applied: ${migrationFile}`);
++      continue;
++    }
++
++    const migrationPath = resolve(migrationsDirectory, migrationFile);
++    const sql = await readFile(migrationPath, "utf8");
++    await client.query(sql);
++    await client.query(
++      "INSERT INTO tcrmhc_schema_migrations (filename) VALUES ($1) ON CONFLICT (filename) DO NOTHING",
++      [migrationFile]
++    );
++    console.log(`Migration completed: ${migrationFile}`);
++  }
+ } finally {
++  client.release();
+   await pool.end();
+ }

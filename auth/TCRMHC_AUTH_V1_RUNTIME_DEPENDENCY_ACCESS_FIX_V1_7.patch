@@ -1,0 +1,42 @@
+diff --git a/scripts/prepare-runtime-dependency-access.sh b/scripts/prepare-runtime-dependency-access.sh
+new file mode 100755
+index 0000000..a69c43b
+--- /dev/null
++++ b/scripts/prepare-runtime-dependency-access.sh
+@@ -0,0 +1,36 @@
++#!/usr/bin/env bash
++set -euo pipefail
++
++ROOT="${1:-/var/www/TCRMHC}"
++RUNTIME_GROUP="${2:-tcrmhc}"
++
++if [[ ! -d "$ROOT" ]]; then
++  echo "TCRMHC root does not exist: $ROOT" >&2
++  exit 1
++fi
++
++if ! getent group "$RUNTIME_GROUP" >/dev/null 2>&1; then
++  echo "Runtime group does not exist: $RUNTIME_GROUP" >&2
++  exit 1
++fi
++
++paths=(
++  "$ROOT/node_modules"
++  "$ROOT/apps/api/node_modules"
++)
++
++for path in "${paths[@]}"; do
++  if [[ ! -e "$path" ]]; then
++    echo "Required dependency path does not exist: $path" >&2
++    exit 1
++  fi
++
++  chgrp -R "$RUNTIME_GROUP" "$path"
++
++  # Runtime needs only traversal on directories and read access on files.
++  # Do not grant group write permission to installed dependencies.
++  find -L "$path" -type d -exec chmod g+rx {} +
++  find -L "$path" -type f -exec chmod g+r {} +
++done
++
++echo "TCRMHC runtime dependency access prepared."

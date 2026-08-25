@@ -1,0 +1,21 @@
+TCRMHC Phase 2 Typecheck Repair V2.0.2
+
+Purpose:
+Fix the pre-migration TypeScript errors reported after V2.0.1 was successfully applied.
+
+Files changed:
+- apps/web/src/features/admin/DashboardPage.tsx
+- apps/web/src/features/admin/UserDetailPage.tsx
+
+Fixes:
+- Give dashboard labels an explicit fixed-length tuple type so indexed labels are guaranteed strings under strict/noUncheckedIndexedAccess TypeScript settings.
+- Make membership copying null-safe inside the async handler so the captured user state cannot violate nullable typing.
+
+Patch SHA-256:
+ff78b415243059a9dfbe772f6ad66fa35b5c38e263042d86f4424ed526310600
+
+Apply target:
+A production worktree where the Phase 2 V2.0.1 patch has already been applied and no migration has yet run.
+
+Safety:
+No credentials, hashes, database values, environment values, session tokens, or API keys are included.

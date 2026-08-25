@@ -1,0 +1,26 @@
+TCRMHC Phase 2 Migration Runner Fix V2.0.4
+
+Purpose:
+Fix the migration command so pnpm db:migrate executes all numbered SQL migrations in apps/api/src/db/migrations in lexical order, instead of hard-coding only 0000_auth_v1.sql.
+
+Patch:
+phase2/v2_0_4/TCRMHC_PHASE2_MIGRATION_RUNNER_FIX_V2_0_4.patch
+
+Patch SHA-256:
+6c5d5f0a7a80faa9e6d05d0b6c5cb1a6e2304ab9de2584d591c8a5632c5ce0ee
+
+File changed:
+- apps/api/src/scripts/migrate.ts
+
+Expected behavior after applying:
+- discovers numbered migration files matching ^\\d+_.+\\.sql$
+- sorts migration filenames lexically
+- executes 0000_auth_v1.sql then 0001_phase2_portal.sql
+- future numbered SQL migrations are picked up automatically
+- prints only migration filenames on completion, not database credentials or environment values
+
+Apply target:
+A production worktree where Phase 2 V2.0.1, V2.0.2 and V2.0.3 are already applied, the Phase 2 migration file exists, and the Phase 2 schema has not yet been created.
+
+Safety:
+No credentials, password hashes, database connection strings, environment values, session tokens, API keys, or private keys are included.

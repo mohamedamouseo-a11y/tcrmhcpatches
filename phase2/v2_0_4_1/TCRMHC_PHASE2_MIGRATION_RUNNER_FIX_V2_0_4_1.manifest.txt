@@ -1,0 +1,30 @@
+TCRMHC Phase 2 Migration Runner Fix V2.0.4.1
+
+Purpose:
+Fix pnpm db:migrate so it discovers and executes all numbered SQL migrations in lexical order and records successfully applied migrations in tcrmhc_schema_migrations.
+
+This supersedes the untracked V2.0.4 runner. Use V2.0.4.1 only.
+
+Patch:
+phase2/v2_0_4_1/TCRMHC_PHASE2_MIGRATION_RUNNER_FIX_V2_0_4_1.patch
+
+Patch SHA-256:
+cef2fbb23f032a9403120105014dceb8aaf70bfe8f70a21eebc34a6ce6953aa7
+
+File changed:
+- apps/api/src/scripts/migrate.ts
+
+Expected behavior:
+- creates tcrmhc_schema_migrations if absent
+- discovers migration files matching ^\\d+_.+\\.sql$
+- executes migrations in lexical order
+- records each completed migration by filename
+- skips migrations already recorded
+- on the first V2.0.4.1 run, the existing idempotent 0000_auth_v1.sql may execute once and be recorded, then 0001_phase2_portal.sql executes and is recorded
+- future pnpm db:migrate runs skip both recorded migrations
+
+Apply target:
+Production worktree with Phase 2 V2.0.1, V2.0.2 and V2.0.3 already applied, with 0001_phase2_portal.sql present, and with Phase 2 schema still absent.
+
+Safety:
+No credentials, password hashes, database connection strings, environment values, session tokens, API keys, or private keys are included.

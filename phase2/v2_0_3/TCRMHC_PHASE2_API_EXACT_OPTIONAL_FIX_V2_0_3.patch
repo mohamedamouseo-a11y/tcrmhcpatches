@@ -1,0 +1,61 @@
+diff --git a/apps/api/src/modules/admin/tenant.service.ts b/apps/api/src/modules/admin/tenant.service.ts
+--- a/apps/api/src/modules/admin/tenant.service.ts
++++ b/apps/api/src/modules/admin/tenant.service.ts
+@@ -1,6 +1,6 @@
+ import { pool } from "../../db/client.js";
+ 
+-export type PageInput = { page: number; pageSize: number; search?: string; status?: string };
++export type PageInput = { page: number; pageSize: number; search?: string | undefined; status?: string | undefined };
+ 
+ export async function listTenants(input: PageInput) {
+   const offset = (input.page - 1) * input.pageSize;
+@@ -43,7 +43,7 @@
+   return { ...tenant.rows[0], positions: positions.rows, membershipCount: Number(membershipCount.rows[0]?.count ?? 0) };
+ }
+ 
+-export async function createTenant(input: { name: string; slug: string; code?: string | null; status: string }) {
++export async function createTenant(input: { name: string; slug: string; code?: string | null | undefined; status: string }) {
+   const result = await pool.query(
+     `INSERT INTO tenants (name, slug, code, status)
+      VALUES ($1, $2, $3, $4)
+diff --git a/apps/api/src/modules/admin/position.service.ts b/apps/api/src/modules/admin/position.service.ts
+--- a/apps/api/src/modules/admin/position.service.ts
++++ b/apps/api/src/modules/admin/position.service.ts
+@@ -1,6 +1,6 @@
+ import { pool } from "../../db/client.js";
+ 
+-export async function listPositions(input: { page: number; pageSize: number; search?: string; status?: string; tenantId?: string }) {
++export async function listPositions(input: { page: number; pageSize: number; search?: string | undefined; status?: string | undefined; tenantId?: string | undefined }) {
+   const offset = (input.page - 1) * input.pageSize;
+   const values: unknown[] = [];
+   const where: string[] = [];
+diff --git a/apps/api/src/modules/admin/user-management.service.ts b/apps/api/src/modules/admin/user-management.service.ts
+--- a/apps/api/src/modules/admin/user-management.service.ts
++++ b/apps/api/src/modules/admin/user-management.service.ts
+@@ -3,7 +3,7 @@
+ import { hashPassword } from "../auth/password.service.js";
+ import { normalizeIdentifier } from "../security/security-events.js";
+ 
+-type MembershipInput = { tenantId: string; roleId: string; positionId?: string | null; status: "active" | "disabled" };
++type MembershipInput = { tenantId: string; roleId: string; positionId?: string | null | undefined; status: "active" | "disabled" };
+ 
+ async function validateMembership(client: PoolClient, membership: MembershipInput): Promise<boolean> {
+   const role = await client.query(`SELECT id FROM roles WHERE id = $1 AND scope = 'tenant'`, [membership.roleId]);
+@@ -17,7 +17,7 @@
+   return true;
+ }
+ 
+-export async function listUsers(input: { page: number; pageSize: number; search?: string; status?: string; tenantId?: string }) {
++export async function listUsers(input: { page: number; pageSize: number; search?: string | undefined; status?: string | undefined; tenantId?: string | undefined }) {
+   const offset = (input.page - 1) * input.pageSize;
+   const values: unknown[] = [];
+   const where: string[] = [];
+@@ -95,7 +95,7 @@
+   }
+ }
+ 
+-export async function updateManagedUser(id: string, input: { status?: string; memberships?: MembershipInput[] }) {
++export async function updateManagedUser(id: string, input: { status?: string | undefined; memberships?: MembershipInput[] | undefined }) {
+   const client = await pool.connect();
+   try {
+     await client.query("BEGIN");

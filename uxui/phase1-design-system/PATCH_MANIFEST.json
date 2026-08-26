@@ -1,0 +1,17 @@
+{
+  "name": "TCRMHC UX/UI Phase 1 — Design System + Light/Dark Theme",
+  "target_repo": "mohamedamouseo-a11y/TCRMHC",
+  "target_branch": "main",
+  "base_commit": "74cb8e5e07314d52450a115c0949ff1d6cf480b2",
+  "new_files": [
+    "apps/web/src/lib/theme.ts",
+    "apps/web/src/features/ThemeToggle.tsx"
+  ],
+  "modified_files": [
+    "apps/web/src/main.tsx",
+    "apps/web/src/features/admin/AdminLayout.tsx",
+    "apps/web/src/features/auth/LoginPage.tsx",
+    "apps/web/src/styles.css"
+  ],
+  "scope": "Design-system foundation and persistent light/dark theming only; individual screen redesigns follow in later phases."
+}

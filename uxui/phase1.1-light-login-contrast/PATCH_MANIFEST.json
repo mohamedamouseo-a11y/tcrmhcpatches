@@ -1,0 +1,18 @@
+{
+  "name": "TCRMHC UX/UI Phase 1.1 — Light Login Contrast Fix",
+  "target_repo": "mohamedamouseo-a11y/TCRMHC",
+  "target_branch": "main",
+  "base_commit": "669f967daf65783a09f4340ed93a0b2e9034e26e",
+  "modified_files": [
+    "apps/web/src/styles.css"
+  ],
+  "scope": "Light-mode login contrast only",
+  "prohibited_scope": [
+    "TCRM Main",
+    "backend",
+    "database",
+    "auth behavior",
+    "unrelated screen redesign"
+  ],
+  "expected_commit_message": "fix: improve light mode login contrast"
+}

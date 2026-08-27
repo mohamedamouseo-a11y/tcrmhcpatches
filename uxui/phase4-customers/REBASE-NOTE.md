@@ -1,0 +1,1 @@
+Phase 4 was safely rebased from TCRMHC commit `6f1ad3d83ee42220e7a2016166e01570dd00a973` to `5ceb57cd3e02a65a993559dd199174625a503017` after verification that the intervening commit only added `apps/api/src/db/migrations/0011_kb_phase1_getting_started.sql` and did not change the Phase 4 target files.

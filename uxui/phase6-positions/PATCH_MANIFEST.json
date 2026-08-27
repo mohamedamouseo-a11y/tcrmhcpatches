@@ -1,0 +1,40 @@
+{
+  "name": "TCRMHC UX/UI Phase 6 — Positions Management",
+  "target_repo": "mohamedamouseo-a11y/TCRMHC",
+  "target_branch": "main",
+  "base_commit": "b2239e3e829526d37e02aa523bd038bee45a2a49",
+  "modified_files": [
+    "apps/web/src/features/admin/PositionsPage.tsx",
+    "apps/web/src/styles.css"
+  ],
+  "existing_api_capabilities_used": [
+    "GET /positions with page/search/status/tenantId",
+    "POST /positions",
+    "PATCH /positions/:id",
+    "GET /tenants",
+    "GET /admin/kb/audiences",
+    "GET /admin/kb/position-audiences?positionId=...",
+    "PUT /admin/kb/position-audiences/:positionId"
+  ],
+  "scope": [
+    "Professional Positions list",
+    "Server-backed search/status/customer filters",
+    "Responsive mobile position cards",
+    "Professional create-position modal",
+    "Position management/edit panel",
+    "Bilingual name/code/description/status/sort-order management",
+    "Help Audience mapping using existing KB mapping APIs",
+    "Inactive-position audience-mapping safety UX",
+    "Light/Dark, Arabic RTL/English LTR, mobile and accessibility"
+  ],
+  "non_scope": [
+    "Backend/API changes",
+    "Database migrations",
+    "Changing a position's customer after creation",
+    "Creating or editing Help Audiences",
+    "Fake positions or QA mutations",
+    "TCRM Main",
+    "Sessions/Security screen redesign"
+  ],
+  "expected_commit_message": "feat: redesign positions management UX"
+}

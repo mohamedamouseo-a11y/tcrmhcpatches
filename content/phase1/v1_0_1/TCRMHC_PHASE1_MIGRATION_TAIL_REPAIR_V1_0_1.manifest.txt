@@ -1,0 +1,116 @@
+TCRMHC_PHASE1_MIGRATION_TAIL_REPAIR_V1_0_1
+Version: 1.0.1
+Created: 2026-08-27
+
+PURPOSE
+Repair the production worktree created by the previously applied Phase 1 V1.0 patch. The original patch declared a new-file hunk of 729 lines while its intended SQL payload contains 738 lines. git apply therefore created apps/api/src/db/migrations/0011_kb_phase1_getting_started.sql with only 729 lines and omitted the final 9 SQL lines, causing PostgreSQL to report an unterminated dollar-quoted string.
+
+TARGET STATE BEFORE APPLY
+- Production checkout: /var/www/TCRMHC
+- Repository: mohamedamouseo-a11y/TCRMHC
+- Expected HEAD remains: 6f1ad3d83ee42220e7a2016166e01570dd00a973
+- Expected worktree contains exactly the untracked file:
+  apps/api/src/db/migrations/0011_kb_phase1_getting_started.sql
+- Expected migration file line count: 729
+- Expected final line before repair:
+  AND length(trim(title_en)) > 0
+- Migration tracking must contain 0 rows for 0011_kb_phase1_getting_started.sql
+- Target Phase 1 article rows must still be 0 before retry.
+
+PATCH
+Repository: mohamedamouseo-a11y/tcrmhcpatches
+Path: content/phase1/v1_0_1/TCRMHC_PHASE1_MIGRATION_TAIL_REPAIR_V1_0_1.patch
+SHA-256: af1a1705a4f7bc6f7011a807a517038d24ff6095d9acada590909b8ec1af086a
+
+PATCH EFFECT
+Appends exactly the missing 9 SQL lines to the existing 729-line migration file. Final migration line count must be 738. The repaired file must end with:
+  END $$;
+
+  COMMIT;
+
+The repair restores these omitted checks/statements:
+- body_ar non-empty verification
+- body_en non-empty verification
+- published_count must equal 7 verification
+- closes the DO $$ block
+- COMMIT
+
+IMPORTANT
+- Do NOT re-apply the original V1.0 patch.
+- Do NOT manually edit the SQL file.
+- Do NOT reset or discard the existing untracked migration file before applying this repair.
+- Do NOT touch TCRM main or its database.
+- Preserve unrelated production changes if any appear unexpectedly.
+
+PRECHECKS
+1. Freshly fetch/pull tcrmhcpatches main.
+2. Verify SHA-256 of the repair patch equals the manifest value.
+3. In /var/www/TCRMHC record:
+   git rev-parse HEAD
+   git status --short
+4. Verify the migration file exists, is untracked, has 729 lines, and its tail matches the expected truncated state.
+5. Verify tcrmhc_schema_migrations has no row for 0011_kb_phase1_getting_started.sql.
+6. Verify the seven Phase 1 slugs have 0 rows.
+7. A production DB backup already exists from the blocked attempt, but take a fresh normal backup before the migration retry if that is the standard production policy.
+
+APPLY
+Run:
+  git apply --check <REPAIR_PATCH_PATH>
+  git apply <REPAIR_PATCH_PATH>
+
+POST-REPAIR FILE CHECK
+- wc -l apps/api/src/db/migrations/0011_kb_phase1_getting_started.sql must report 738.
+- tail must show the complete verification block, END $$;, and COMMIT;.
+- Do not run db:migrate unless these checks pass.
+
+VALIDATION ORDER
+1. pnpm typecheck
+2. pnpm db:migrate
+3. pnpm build
+4. DB verification of exactly 7 Phase 1 articles
+5. pnpm kb:ai-sync
+6. Restart/reload existing production TCRMHC services
+7. Help Center smoke tests in Arabic and English
+8. Search tests in Arabic and English
+
+EXPECTED ARTICLES
+- tcrm-dashboard-overview
+- tcrm-navigation-sidebar
+- tcrm-login-account-security
+- tcrm-global-search
+- tcrm-language-theme
+- tcrm-notifications-settings
+- tcrm-role-based-interface
+
+For all seven expect:
+- status=published
+- visibility_scope=general
+- consumer_hidden=false
+- Arabic title/body non-empty
+- English title/body non-empty
+
+FINAL GIT STATE AND PUSH
+After all validation succeeds:
+- Review git diff and git status.
+- Commit the complete repaired migration file as the Phase 1 content change.
+- Push from the production TCRMHC checkout to mohamedamouseo-a11y/TCRMHC main.
+- DO NOT push to TCRM main.
+
+RETURN REPORT
+Return:
+- repair patch SHA-256 and manifest SHA-256 confirmation
+- pre-repair TCRMHC HEAD/status
+- pre-repair migration line count/tail verification
+- git apply --check result
+- post-repair 738-line/tail verification
+- typecheck result
+- migration result
+- build result
+- 7-row DB verification
+- kb:ai-sync result
+- runtime restart result
+- Arabic/English article smoke results
+- Arabic/English search results
+- final TCRMHC commit SHA pushed to main
+- final git status --short
+- any preserved unrelated changes/warnings

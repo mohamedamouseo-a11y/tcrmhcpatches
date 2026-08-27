@@ -6,10 +6,14 @@ TARGET
 - Final repository: mohamedamouseo-a11y/TCRMHC
 - Expected TCRMHC base HEAD at patch authoring: 39195817b8e45850568401d77065d4b7132c0902
 - Patch repository: mohamedamouseo-a11y/tcrmhcpatches
-- Patch package: content/phase3/v3_0/TCRMHC_PHASE3_BUSINESS_DEVELOPMENT_CONTENT_V3_0.patch.gz.b64
-- Encoded package SHA-256: 53607e8700ccddf9750905900aa8fd4b515214aaa6a7bc0ea465ea2fb250e068
+- Reconstruction script: content/phase3/v3_0/RECONSTRUCT.sh
+- Package parts: content/phase3/v3_0/package-parts/part-001.b64 through part-011.b64
+- Reconstructed encoded package SHA-256: 53607e8700ccddf9750905900aa8fd4b515214aaa6a7bc0ea465ea2fb250e068
 - Decoded gzip SHA-256: 8b63ca5f0c8b590525fc126f0b530bb925091c07eda015d211edb9f3b7c4641e
 - Decoded patch SHA-256: 6767dcf2ca1f33bd5801958617b59e0b5f990184b4966ca138917f479d956f31
+
+IMPORTANT PACKAGE NOTE
+The Phase 3 package is intentionally stored as 11 small parts because the connector transport can truncate large single-file payloads. There is NO valid monolithic package file in the repository. Always reconstruct with RECONSTRUCT.sh and verify the reconstructed SHA-256 before decoding. Do not use any cached or previously downloaded monolithic Phase 3 package.
 
 SCOPE
 Adds exactly one TCRMHC migration:
@@ -18,23 +22,25 @@ apps/api/src/db/migrations/0013_kb_phase3_business_development.sql
 Migration integrity:
 - Expected applied migration line count: 1227
 - Migration SHA-256: 7d491a5aa76f7617f545d85a6f74fada0436498e23bdcf480fa89269c6ec2668
-- Generated with git diff; hunk header is @@ -0,0 +1,1227 @@
+- Generated with git diff; hunk header: @@ -0,0 +1,1227 @@
 - Clean-repo git apply --check: PASS
 - Clean-repo git apply: PASS
 - Applied migration byte-for-byte comparison to source: PASS
-- Expected SQL tail closes with END $$; followed by COMMIT;
+- Expected SQL tail: END $$; followed by COMMIT;
 
 HIERARCHY
-Reuses the existing TCRM module:
-- Module slug: tcrm / Tamiyouz CRM
+Reuses existing module:
+- tcrm / Tamiyouz CRM
 
-Creates or updates:
-- Category: tcrm-business-development
-  Arabic: تطوير الأعمال
-  English: Business Development
-- Subcategory: tcrm-bd-core
-  Arabic: تشغيل تطوير الأعمال
-  English: BD Operations
+Creates or updates category:
+- slug: tcrm-business-development
+- Arabic: تطوير الأعمال
+- English: Business Development
+
+Creates or updates subcategory:
+- slug: tcrm-bd-core
+- Arabic: تشغيل تطوير الأعمال
+- English: BD Operations
 
 ARTICLES
 Adds/updates exactly 9 published bilingual general articles:
@@ -48,20 +54,18 @@ Adds/updates exactly 9 published bilingual general articles:
 8. tcrm-bd-quotations — إنشاء وإدارة عروض الأسعار للصفقات / Creating and Managing Quotations for Deals
 9. tcrm-bd-client-portal — استخدام رابط عرض السعر في بوابة العميل / Using the Quotation Link in the Client Portal
 
-All nine are:
+All nine must be:
 - status=published
 - visibility_scope=general
 - consumer_hidden=false
-- Arabic + English title/body non-empty
-- plain-text bodies compatible with TCRMHC SafeBody rendering
-- searchable through the existing kb_articles search_document trigger
+- Arabic title/body non-empty
+- English title/body non-empty
+- plain text compatible with TCRMHC SafeBody
+- searchable through existing KB search
 - idempotent by tenant_id + slug upsert
 
 SOURCE OF TRUTH
-Content was authored from current TCRM main behavior in:
-mohamedamouseo-a11y/TCRM-MAIN-Tamiyouz-CRM-
-
-Primary inspected files:
+Content was authored from current TCRM main behavior in mohamedamouseo-a11y/TCRM-MAIN-Tamiyouz-CRM-, primarily:
 - client/src/App.tsx
 - client/src/pages/BD/BDDashboard.tsx
 - client/src/pages/BD/DealsKanban.tsx
@@ -75,44 +79,44 @@ Primary inspected files:
 - client/src/pages/BD/BDPortal.tsx
 
 VERIFIED PRODUCT BEHAVIOR REPRESENTED
-- BusinessDeveloper login route -> /bd
-- /bd dashboard KPIs, 30/60/90 weighted forecasts, goals, stale deals, funnel, hot deals, team overview where authorized
-- Cmd/Ctrl+K BD search for deals, companies, and contacts
-- /bd/deals pipeline selection, smart search, saved views, multi-select, bulk actions, drag/drop stage movement, new-deal form
-- /bd/deals/:id stage/probability/value/MRR/details, Lost reason flow, deal files, activities, AI insights
+- BusinessDeveloper login destination /bd
+- /bd KPIs, weighted 30/60/90-day forecast, goals, stale deals, funnel, hot deals, authorized team overview, Cmd/Ctrl+K BD search
+- /bd/deals pipeline selector, smart search, saved views, multi-select/bulk actions, drag/drop stage movement, new-deal flow
+- /bd/deals/:id deal value/MRR/stage/probability, loss-reason flow, files, activities, AI insights
 - /bd/companies search/country filters and company creation fields
-- /bd/contacts search, company/source association, communication fields, Decision Maker flag
-- /bd/analytics top performers, loss analysis, source performance, stage conversion, 30-day activity volume
-- /bd/coaching 7/30/90-day periods, overview/leaderboard/deal-health/churn/sessions/targets, rep notes and AI plan
-- /bd/templates create/edit/delete/copy, categories, sharing, template placeholders
-- /bd/quote/:id quotation types, sections/items, autosave, revision conflicts, locked statuses, new versions, share and print
-- /portal/:token customer quotation display, version/link permissions, print/PDF, accept/change/reject decisions and link errors
+- /bd/contacts search, company/source association, communication details and Decision Maker flag
+- /bd/analytics top performers, loss analysis, lead-source performance, stage conversion and 30-day activity volume
+- /bd/coaching 7/30/90-day periods, Overview/Leaderboard/Deal Health/Churn Risk/Sessions/Targets, rep notes and AI plan
+- /bd/templates create/edit/delete/copy, categories, team sharing and template variables
+- /bd/quote/:id quotation types, sections/items, autosave, revision conflicts, locked statuses, new versions, sharing and printing
+- /portal/:token quotation display, version-bound permissions, print/PDF, accept/request-changes/reject decisions and link-state errors
 
-PRODUCTION EXECUTION NOTE
-The established TCRMHC production API runtime previously verified is:
+PRODUCTION RUNTIME
+Established TCRMHC production API runtime from the previous verified phase:
 - PM2 process: tcrmhc-api
 - Launcher: /var/www/TCRMHC/apps/api/start-with-env.mjs
-- Existing environment source used by the launcher: /etc/tcrmhc/tcrmhc.env
+- Existing environment source used by launcher: /etc/tcrmhc/tcrmhc.env
 
-Run db:migrate and kb:ai-sync through the existing production runtime/environment without printing or persisting secret values. Do not invent a new .env file.
+Run db:migrate and kb:ai-sync through the established production runtime/environment without printing or persisting secret values. Do not create or modify a .env file.
 
 REQUIRED EXECUTION ORDER
-1. Verify current /var/www/TCRMHC HEAD, branch, remote, and worktree.
-2. If HEAD differs from expected base, verify migration 0013 does not exist and run git apply --check before proceeding.
-3. Verify all package checksums.
-4. Decode package to a temporary patch.
-5. git apply --check.
-6. git apply.
-7. Verify migration line count, SHA-256, and SQL tail.
-8. Take the normal PostgreSQL production backup/snapshot.
-9. Run pnpm typecheck.
-10. Run pnpm db:migrate through the established production runtime environment.
-11. Run pnpm build.
-12. Verify exactly 9 Phase 3 rows and hierarchy.
-13. Run pnpm kb:ai-sync through the established production runtime environment; require failed=0.
-14. Reload the existing TCRMHC production service and verify HTTP 200 health.
-15. Live-test hierarchy, Arabic RTL, English LTR, representative articles, and search.
-16. Review diff/status, commit only migration 0013, and publish through the existing protected Developer Hub Review Push workflow to TCRMHC/main.
+1. Verify /var/www/TCRMHC HEAD, branch, remote, and status.
+2. Confirm migration 0013 is absent. If HEAD differs from the authoring baseline, do not reset; inspect drift and require git apply --check to pass.
+3. Fresh-fetch tcrmhcpatches and read this manifest.
+4. Run RECONSTRUCT.sh and verify reconstructed encoded SHA-256.
+5. Base64-decode to gzip and verify gzip SHA-256.
+6. Decompress to patch and verify patch SHA-256.
+7. Run git apply --check, then git apply.
+8. Verify migration line count=1227, migration SHA-256, and SQL tail.
+9. Take normal production PostgreSQL backup/snapshot.
+10. Run pnpm typecheck.
+11. Run pnpm db:migrate through the established production runtime environment; verify exactly one successful tracking row for 0013.
+12. Run pnpm build.
+13. Verify exactly 9 Phase 3 articles and the hierarchy.
+14. Run pnpm kb:ai-sync through production runtime; require failed=0.
+15. Reload existing TCRMHC service and verify HTTP 200 health.
+16. Live-test hierarchy, representative Arabic/English articles, RTL/LTR, rendering, and search.
+17. Review diff/status; commit only migration 0013 and publish through existing protected Developer Hub Review Push to TCRMHC/main.
 
 LIVE SMOKE TARGETS
 Hierarchy:
@@ -125,22 +129,18 @@ Open at minimum:
 - tcrm-bd-quotations
 - tcrm-bd-client-portal
 
-Search tests:
-Arabic:
-- تطوير الأعمال
-- عروض الأسعار
-English:
-- business development
-- deal coaching
-- client portal
+Search:
+Arabic: تطوير الأعمال
+Arabic: عروض الأسعار
+English: business development
+English: deal coaching
+English: client portal
 
 SECURITY / SCOPE
-- Do not modify TCRM main.
-- Do not modify the TCRM database.
-- Do not commit backups, logs, temporary decoded patches, or unrelated work.
+- Do not modify TCRM main or TCRM database.
+- Do not commit backups, logs, temporary decoded patches, package parts, or unrelated work into TCRMHC.
 - Do not print or persist production secrets.
-- Final system commit scope must contain only:
-  apps/api/src/db/migrations/0013_kb_phase3_business_development.sql
+- Final system commit scope must contain only apps/api/src/db/migrations/0013_kb_phase3_business_development.sql
 
 FINAL COMMIT MESSAGE
 feat: complete TCRMHC Phase 3 Business Development Content V3.0

@@ -1,0 +1,17 @@
+{
+  "name": "TCRMHC UX/UI Phase 2.1 — Tamy Polish",
+  "target_repo": "mohamedamouseo-a11y/TCRMHC",
+  "target_branch": "main",
+  "base_commit": "aa8b9770898d38dd54152eae9cb25392aed17ed5",
+  "modified_files": [
+    "apps/web/src/features/TamyFloatingAgent.tsx",
+    "apps/web/src/styles.css"
+  ],
+  "scope": [
+    "Fix Tamy light-mode conversation contrast",
+    "Move unsaved Arabic RTL default launcher away from right sidebar",
+    "Preserve saved Tamy position/dock behavior",
+    "Collect missing drag persistence and real chat proof"
+  ],
+  "expected_commit_message": "fix: polish Tamy light mode and RTL placement"
+}

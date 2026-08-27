@@ -1,0 +1,235 @@
+TCRMHC_PHASE2_SALES_LEADS_CONTENT_V2_0
+Version: 2.0
+Created: 2026-08-27
+
+TARGET
+- Final repository: mohamedamouseo-a11y/TCRMHC
+- Expected TCRMHC base HEAD at patch authoring: 5ceb57cd3e02a65a993559dd199174625a503017
+- Patch repository: mohamedamouseo-a11y/tcrmhcpatches
+- Patch package: content/phase2/v2_0/TCRMHC_PHASE2_SALES_LEADS_CONTENT_V2_0.patch.gz.b64
+- Encoded package SHA-256: dfc16b20db13a75bd942e5c7b86a86d5a82f14ba7846e4db4f4aa682516c56b5
+- Decoded gzip SHA-256: 916469bd3143ddbb2eb144e054ca0393a5fe48c3848bfc2995a1570d5777f225
+- Decoded patch SHA-256: 0dcdc22b5b882865abb10fe95c187330d08497224219d5dfe1af0cd2dcad0215
+
+SCOPE
+Adds exactly one TCRMHC migration:
+apps/api/src/db/migrations/0012_kb_phase2_sales_leads.sql
+
+Migration integrity:
+- Expected applied migration line count: 1049
+- Migration SHA-256: c0d684dcdb8943c0f4f40c6adc63ca7247c5feadf4245d5a3693891b3db23062
+- Generated with git diff; hunk header is @@ -0,0 +1,1049 @@
+- Clean-repo git apply --check: PASS
+- Clean-repo git apply: PASS
+- Applied migration byte-for-byte comparison to source: PASS
+- Expected SQL tail closes with END $$; followed by COMMIT;
+
+HIERARCHY
+Reuses the existing Phase 1 TCRM module:
+- Module slug: tcrm / Tamiyouz CRM
+
+Creates or updates:
+- Category: tcrm-sales-leads
+  Arabic: المبيعات والعملاء المحتملون
+  English: Sales & Leads
+- Subcategory: tcrm-sales-core
+  Arabic: إدارة المبيعات
+  English: Sales Operations
+
+ARTICLES
+Adds/updates exactly 7 published bilingual general articles:
+1. tcrm-leads-list — إدارة قائمة العملاء المحتملين في TCRM / Managing the Leads List in TCRM
+2. tcrm-lead-profile — فهم ملف العميل المحتمل في TCRM / Understanding the TCRM Lead Profile
+3. tcrm-lead-activities — تسجيل الأنشطة والملاحظات على العميل في TCRM / Logging Lead Activities and Notes in TCRM
+4. tcrm-sales-funnel — استخدام قمع المبيعات وتحليل التحويل في TCRM / Using the Sales Funnel and Conversion Analytics in TCRM
+5. tcrm-task-sla — متابعة المهام والالتزام بـ SLA في TCRM / Monitoring Tasks and SLA Compliance in TCRM
+6. tcrm-sales-calendar — إدارة اجتماعات المبيعات من تقويم TCRM / Managing Sales Meetings in the TCRM Calendar
+7. tcrm-team-dashboard — قراءة لوحة أداء فريق المبيعات في TCRM / Reading the TCRM Sales Team Dashboard
+
+All seven are:
+- status=published
+- visibility_scope=general
+- consumer_hidden=false
+- Arabic + English title/body non-empty
+- plain-text bodies compatible with TCRMHC SafeBody rendering
+- searchable through the existing kb_articles search_document trigger
+- idempotent by tenant_id + slug upsert
+
+SOURCE OF TRUTH
+Content was authored from current TCRM main behavior in:
+mohamedamouseo-a11y/TCRM-MAIN-Tamiyouz-CRM-
+
+Primary inspected files:
+- client/src/App.tsx
+- client/src/pages/LeadsList.tsx
+- client/src/pages/LeadProfile.tsx
+- client/src/pages/SalesFunnelDashboard.tsx
+- client/src/pages/TaskSlaDashboard.tsx
+- client/src/pages/CalendarPage.tsx
+- client/src/pages/TeamDashboard.tsx
+
+Verified product behavior represented in the articles includes:
+- /leads and /leads/:id routes
+- Leads search, date range, stage, quality, fit, classification, campaign, owner, Tara source and SLA filters
+- Leads table column customization and retained URL/session filter context
+- New Lead validation, quick Activity, Admin delete and authorized export behavior
+- Lead Profile stage/quality/fit/classification, Lead Score, SLA state, tabs, Handover/Assign and access control
+- Activity types and outcomes plus merged Notes/Activities feed
+- /sales-funnel KPIs, funnel stages, trends, campaign performance and stage conversion
+- /task-sla compliance, breaches, response time, activity analytics, agent tables and breached lead drill-down
+- /calendar create/update/delete meetings, attendees and optional Lead linkage
+- /team-dashboard team KPIs, lead/deal/revenue distributions and drill-down to filtered Leads
+
+PRE-APPLY
+1. Work only from the production TCRMHC checkout, expected at /var/www/TCRMHC.
+2. Confirm the Git remote points to mohamedamouseo-a11y/TCRMHC and branch is main.
+3. Record:
+   git rev-parse HEAD
+   git status --short
+4. Preserve unrelated changes. Do not reset, stash, discard, overwrite, or commit unrelated work.
+5. Expected base HEAD is 5ceb57cd3e02a65a993559dd199174625a503017.
+6. If HEAD differs, do not blindly apply. First inspect the new commits and confirm that apps/api/src/db/migrations/0012_kb_phase2_sales_leads.sql does not already exist and that the patch still applies cleanly.
+7. Verify no existing migration named 0012_kb_phase2_sales_leads.sql exists.
+8. Take the normal production PostgreSQL backup/snapshot before running db:migrate.
+9. Do not access or change TCRM source code or the TCRM database.
+
+PATCH PACKAGE VERIFICATION
+Freshly fetch/pull tcrmhcpatches main. Do not use a cached copy.
+
+Package:
+content/phase2/v2_0/TCRMHC_PHASE2_SALES_LEADS_CONTENT_V2_0.patch.gz.b64
+
+1. Verify encoded package SHA-256:
+dfc16b20db13a75bd942e5c7b86a86d5a82f14ba7846e4db4f4aa682516c56b5
+
+2. Decode without editing:
+base64 -d <PACKAGE_PATH> > /tmp/TCRMHC_PHASE2_SALES_LEADS_CONTENT_V2_0.patch.gz
+gzip -dc /tmp/TCRMHC_PHASE2_SALES_LEADS_CONTENT_V2_0.patch.gz > /tmp/TCRMHC_PHASE2_SALES_LEADS_CONTENT_V2_0.patch
+
+3. Verify decoded gzip SHA-256:
+916469bd3143ddbb2eb144e054ca0393a5fe48c3848bfc2995a1570d5777f225
+
+4. Verify decoded patch SHA-256:
+0dcdc22b5b882865abb10fe95c187330d08497224219d5dfe1af0cd2dcad0215
+
+5. Run:
+git apply --check /tmp/TCRMHC_PHASE2_SALES_LEADS_CONTENT_V2_0.patch
+
+Proceed only if every checksum matches and git apply --check passes.
+
+APPLY
+git apply /tmp/TCRMHC_PHASE2_SALES_LEADS_CONTENT_V2_0.patch
+
+Immediately verify:
+wc -l apps/api/src/db/migrations/0012_kb_phase2_sales_leads.sql
+Expected: 1049
+
+Verify the tail contains:
+END $$;
+
+COMMIT;
+
+Do not run the migration if line count or tail is wrong.
+
+VALIDATION ORDER
+1. pnpm typecheck
+2. pnpm db:migrate
+3. pnpm build
+
+DATABASE VERIFICATION
+Run a read-only query equivalent to:
+
+SELECT slug,status,visibility_scope,consumer_hidden,
+       length(title_ar) AS title_ar_len,
+       length(title_en) AS title_en_len,
+       length(body_ar) AS body_ar_len,
+       length(body_en) AS body_en_len
+FROM kb_articles
+WHERE slug IN (
+  'tcrm-leads-list',
+  'tcrm-lead-profile',
+  'tcrm-lead-activities',
+  'tcrm-sales-funnel',
+  'tcrm-task-sla',
+  'tcrm-sales-calendar',
+  'tcrm-team-dashboard'
+)
+ORDER BY sort_order, slug;
+
+Expected:
+- exactly 7 rows
+- status=published for all
+- visibility_scope=general for all
+- consumer_hidden=false for all
+- every Arabic/English title and body length > 0
+
+Also verify:
+- category tcrm-sales-leads exists under module tcrm
+- subcategory tcrm-sales-core exists under that category
+- tcrmhc_schema_migrations contains exactly one row for 0012_kb_phase2_sales_leads.sql
+
+AI KNOWLEDGE
+After DB verification succeeds:
+pnpm kb:ai-sync
+
+Require task-specific sync to complete with failed=0. Record total/synced/skipped/failed.
+
+RUNTIME VALIDATION
+Restart/reload TCRMHC API/web using the existing production process only.
+
+Smoke-test the authenticated Help Center:
+- Tamiyouz CRM navigation contains Sales & Leads / المبيعات والعملاء المحتملون
+- Sales Operations / إدارة المبيعات is visible
+- all 7 Phase 2 articles are listed
+- open tcrm-leads-list in Arabic and English
+- open tcrm-task-sla
+- open tcrm-sales-calendar
+- Arabic renders RTL and English renders LTR
+- no raw Markdown/HTML artifacts
+
+SEARCH TESTS
+Verify Help Center search returns Phase 2 content for at least:
+- Arabic: العملاء المحتملين
+- Arabic: SLA
+- English: sales funnel
+- English: lead activities
+
+FINAL PUSH
+After every validation succeeds:
+1. Review git diff and git status.
+2. Commit only:
+   apps/api/src/db/migrations/0012_kb_phase2_sales_leads.sql
+3. Use the system's existing protected Developer Hub / Review Push workflow.
+4. Push from the system checkout to:
+   mohamedamouseo-a11y/TCRMHC
+   branch main
+5. Do NOT push to TCRM main.
+6. Do NOT commit any backup, patch-repo file, logs, or unrelated production changes.
+
+Suggested commit message:
+feat: complete TCRMHC Phase 2 Sales & Leads Content V2.0
+
+RETURN REPORT
+Return a final report containing:
+- freshly fetched patch SHA-256 and manifest comparison
+- TCRMHC pre-apply HEAD
+- pre-apply git status
+- git apply --check result
+- applied migration line count and tail verification
+- typecheck result
+- migration result
+- build result
+- 7-row DB verification
+- hierarchy verification
+- migration tracking verification
+- kb:ai-sync result
+- production restart/health result
+- Arabic and English Help Center smoke results
+- Arabic and English search results
+- Review Push result
+- final TCRMHC commit SHA pushed to main
+- confirmation local HEAD = GitHub main
+- final git status --short
+- any preserved unrelated changes or warnings
+
+Do not mark Phase 2 complete unless all gates pass and the final system commit is pushed to mohamedamouseo-a11y/TCRMHC main.

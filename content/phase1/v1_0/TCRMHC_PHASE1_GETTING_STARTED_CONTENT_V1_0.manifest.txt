@@ -1,0 +1,122 @@
+TCRMHC_PHASE1_GETTING_STARTED_CONTENT_V1_0
+Version: 1.0
+Created: 2026-08-27
+
+TARGET
+- Final repository: mohamedamouseo-a11y/TCRMHC
+- Expected TCRMHC base HEAD at patch authoring: 6f1ad3d83ee42220e7a2016166e01570dd00a973
+- Patch repository: mohamedamouseo-a11y/tcrmhcpatches
+- Patch file: content/phase1/v1_0/TCRMHC_PHASE1_GETTING_STARTED_CONTENT_V1_0.patch
+- Patch SHA-256: fbb12061c9adfba3bb4b1bd1f2f9572e2ccd9f621861356e9e9714870deace64
+
+SCOPE
+Adds exactly one TCRMHC migration:
+apps/api/src/db/migrations/0011_kb_phase1_getting_started.sql
+
+The migration is transactional and idempotent at content level. It creates/updates:
+- Module: tcrm / Tamiyouz CRM
+- Category: tcrm-getting-started / البداية واستخدام TCRM / Getting Started with TCRM
+- Subcategory: tcrm-core-basics / الأساسيات / Core Basics
+- 7 published bilingual general articles:
+  1. tcrm-dashboard-overview
+  2. tcrm-navigation-sidebar
+  3. tcrm-login-account-security
+  4. tcrm-global-search
+  5. tcrm-language-theme
+  6. tcrm-notifications-settings
+  7. tcrm-role-based-interface
+
+All seven articles are:
+- status=published
+- visibility_scope=general
+- consumer_hidden=false
+- Arabic + English
+- plain-text bodies compatible with TCRMHC SafeBody rendering
+- searchable through the existing kb_articles search_document trigger
+
+SOURCE OF TRUTH
+Content was authored against approved TCRM main behavior:
+mohamedamouseo-a11y/TCRM-MAIN-Tamiyouz-CRM-
+- client/src/pages/AgentDashboard.tsx
+- client/src/components/CRMLayout.tsx
+- client/src/pages/Login.tsx
+- client/src/components/GlobalSearch.tsx
+- client/src/contexts/LanguageContext.tsx
+- client/src/contexts/ThemeContext.tsx
+- client/src/pages/NotificationSettings.tsx
+
+PRE-APPLY
+1. Work from the production TCRMHC checkout, not TCRM main.
+2. Confirm the git remote points to mohamedamouseo-a11y/TCRMHC.
+3. Record: git rev-parse HEAD && git status --short
+4. Preserve unrelated local changes. Do not overwrite or include them in the Phase 1 commit.
+5. If HEAD differs from the expected base, run git apply --check first. Proceed only if the patch applies cleanly.
+6. Take the normal production database backup/snapshot before applying the migration.
+
+APPLY
+git apply --check /path/to/TCRMHC_PHASE1_GETTING_STARTED_CONTENT_V1_0.patch
+git apply /path/to/TCRMHC_PHASE1_GETTING_STARTED_CONTENT_V1_0.patch
+pnpm typecheck
+pnpm db:migrate
+pnpm build
+
+DATABASE VERIFICATION
+Run:
+SELECT slug,status,visibility_scope,consumer_hidden,
+       length(title_ar) AS title_ar_len,
+       length(title_en) AS title_en_len,
+       length(body_ar) AS body_ar_len,
+       length(body_en) AS body_en_len
+FROM kb_articles
+WHERE slug IN (
+  'tcrm-dashboard-overview',
+  'tcrm-navigation-sidebar',
+  'tcrm-login-account-security',
+  'tcrm-global-search',
+  'tcrm-language-theme',
+  'tcrm-notifications-settings',
+  'tcrm-role-based-interface'
+)
+ORDER BY sort_order, slug;
+
+Expected:
+- exactly 7 rows
+- status=published for all
+- visibility_scope=general for all
+- consumer_hidden=false for all
+- all title/body lengths > 0
+
+AI KNOWLEDGE
+After database verification succeeds:
+pnpm kb:ai-sync
+
+RUNTIME VALIDATION
+- Restart/reload TCRMHC API/web using the server's existing production process only.
+- Smoke-test the existing Help Center.
+- Confirm the 7 articles appear in consumer Help Center navigation/listing.
+- Open at least:
+  - tcrm-dashboard-overview in Arabic
+  - tcrm-global-search in English
+- Confirm Arabic RTL/English rendering and no raw HTML/Markdown artifacts.
+- Confirm search can find a Phase 1 article by Arabic and English terms.
+
+FINAL PUSH
+- Review git diff and git status.
+- Commit only the Phase 1 migration introduced by this patch.
+- Push from the system checkout to mohamedamouseo-a11y/TCRMHC main.
+- DO NOT push to TCRM main.
+- DO NOT modify TCRM source code.
+
+RETURN REPORT
+Return:
+- TCRMHC pre-apply HEAD
+- TCRMHC final commit SHA pushed to main
+- git apply --check result
+- typecheck result
+- migration result
+- build result
+- 7-row DB verification output
+- kb:ai-sync result
+- runtime restart result
+- Help Center smoke results
+- any warnings/unrelated pre-existing changes

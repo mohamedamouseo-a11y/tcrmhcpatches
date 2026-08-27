@@ -1,0 +1,30 @@
+{
+  "name": "TCRMHC UX/UI Phase 3 — Professional Dashboard",
+  "target_repo": "mohamedamouseo-a11y/TCRMHC",
+  "target_branch": "main",
+  "base_commit": "c16898fcd4317076fbb943ae038db4a7c32bc564",
+  "modified_files": [
+    "apps/web/src/features/admin/DashboardPage.tsx",
+    "apps/web/src/styles.css"
+  ],
+  "scope": [
+    "Professional dashboard hero and operational snapshot",
+    "Six responsive KPI cards using existing Overview data only",
+    "Active-customer and active-user ratios based on existing counts",
+    "Professional recent-security-events panel",
+    "Quick-access navigation cards",
+    "Light/Dark parity",
+    "Arabic RTL / English LTR",
+    "Responsive mobile layout",
+    "Accessibility and reduced-motion support"
+  ],
+  "non_scope": [
+    "New dashboard API data",
+    "Charts requiring unavailable historical data",
+    "Backend changes",
+    "Database changes",
+    "Other internal screen redesigns",
+    "TCRM Main"
+  ],
+  "expected_commit_message": "feat: redesign super admin dashboard UX"
+}

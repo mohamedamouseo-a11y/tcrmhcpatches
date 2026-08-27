@@ -3,31 +3,12 @@
   "target_repo": "mohamedamouseo-a11y/TCRMHC",
   "target_branch": "main",
   "base_commit": "5ceb57cd3e02a65a993559dd199174625a503017",
+  "archive_sha256": "0eb0956569a67b6290dc5b8cf5d1ad8140b22da3895c65c30adb3f45a297023b",
+  "archive_contains_full_ui_payload": true,
   "modified_files": [
     "apps/web/src/features/admin/TenantsPage.tsx",
     "apps/web/src/features/admin/TenantDetailPage.tsx",
     "apps/web/src/styles.css"
-  ],
-  "scope": [
-    "Professional customers list experience",
-    "Server-backed search using existing tenants API",
-    "Status filtering using existing tenants API",
-    "Responsive desktop table and mobile customer cards",
-    "Professional create-customer modal",
-    "Customer detail redesign",
-    "Existing updateTenant API exposed through professional edit form",
-    "Positions and memberships overview using existing tenant data",
-    "Light/Dark parity",
-    "Arabic RTL / English LTR",
-    "Mobile accessibility and reduced-motion support"
-  ],
-  "non_scope": [
-    "Backend changes",
-    "Database migrations",
-    "New tenant/customer fields",
-    "Fake customer analytics",
-    "TCRM Main",
-    "Users/Positions screen redesign"
   ],
   "expected_commit_message": "feat: redesign customers management UX"
 }

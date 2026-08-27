@@ -1,52 +1,27 @@
 # TCRMHC UX/UI Phase 4 — Customers / Tenants
 
-Target: `mohamedamouseo-a11y/TCRMHC` / `main`  
-Prepared against current remote HEAD: `5ceb57cd3e02a65a993559dd199174625a503017`
+Target: `mohamedamouseo-a11y/TCRMHC` / `main`
 
-## Baseline reviewed
+Approved current baseline:
 
-The current Customers screen is intentionally basic: a page header, toggleable inline create form, unfiltered 25-row table and pagination. The Customer Detail screen exposes status/membership count and positions, but has no edit experience. The existing API already supports:
+`5ceb57cd3e02a65a993559dd199174625a503017`
 
-- customer pagination
-- server-side `search`
-- server-side `status` filtering
-- create customer
-- read customer detail
-- update customer name / slug / code / status
+The current baseline is one commit ahead of the original Phase 4 base and that intervening commit adds only the Getting Started KB migration. It does not modify the Phase 4 target UI files.
 
-Phase 4 uses only those existing capabilities. No new backend data or fake analytics are introduced.
+## Canonical archive
 
-## Phase 4 output
+`TCRMHC-UXUI-PHASE4-CUSTOMERS.zip`
 
-- Premium Customers hero and current result count.
-- Search and status filters backed by the existing API.
-- Responsive desktop table.
-- Professional mobile customer cards using the same semantic table data.
-- Accessible create-customer modal.
-- Customer detail redesign with identity, memberships and positions.
-- Edit customer workflow using the existing `updateTenant` endpoint.
-- Full Light/Dark and Arabic RTL/English LTR parity.
-- Tamy and Phase 2/3 shell remain untouched.
+SHA-256:
 
-## Intended application files
+`0eb0956569a67b6290dc5b8cf5d1ad8140b22da3895c65c30adb3f45a297023b`
 
-Modified only:
+This archive is complete and contains the full embedded UI payload in `APPLY-TCRMHC-UXUI-PHASE4.py`.
+
+## Expected application files
 
 - `apps/web/src/features/admin/TenantsPage.tsx`
 - `apps/web/src/features/admin/TenantDetailPage.tsx`
 - `apps/web/src/styles.css`
 
-## Validation
-
-At minimum:
-
-```bash
-pnpm --filter @tcrmhc/web typecheck
-pnpm --filter @tcrmhc/web build
-```
-
-Live QA must include list/search/filter, create modal without committing fake data, one real existing customer detail, edit UX validation without changing production data unless an authorized harmless reversible test is available, Light/Dark, RTL/LTR and mobile.
-
-## Rebased baseline note
-
-Phase 4 was originally prepared against `6f1ad3d83ee42220e7a2016166e01570dd00a973`. TCRMHC subsequently advanced by one commit to `5ceb57cd3e02a65a993559dd199174625a503017`, which adds only `apps/api/src/db/migrations/0011_kb_phase1_getting_started.sql`. The Phase 4 target files were not changed by that intervening commit, so this patch has been safely rebased by updating the baseline gate only.
+No backend or DB changes belong to Phase 4.

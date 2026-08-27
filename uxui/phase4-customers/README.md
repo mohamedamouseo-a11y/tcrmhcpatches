@@ -1,7 +1,7 @@
 # TCRMHC UX/UI Phase 4 — Customers / Tenants
 
 Target: `mohamedamouseo-a11y/TCRMHC` / `main`  
-Prepared against current remote HEAD: `6f1ad3d83ee42220e7a2016166e01570dd00a973`
+Prepared against current remote HEAD: `5ceb57cd3e02a65a993559dd199174625a503017`
 
 ## Baseline reviewed
 
@@ -46,3 +46,7 @@ pnpm --filter @tcrmhc/web build
 ```
 
 Live QA must include list/search/filter, create modal without committing fake data, one real existing customer detail, edit UX validation without changing production data unless an authorized harmless reversible test is available, Light/Dark, RTL/LTR and mobile.
+
+## Rebased baseline note
+
+Phase 4 was originally prepared against `6f1ad3d83ee42220e7a2016166e01570dd00a973`. TCRMHC subsequently advanced by one commit to `5ceb57cd3e02a65a993559dd199174625a503017`, which adds only `apps/api/src/db/migrations/0011_kb_phase1_getting_started.sql`. The Phase 4 target files were not changed by that intervening commit, so this patch has been safely rebased by updating the baseline gate only.

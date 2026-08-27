@@ -1,0 +1,17 @@
+{
+  "name": "TCRMHC UX/UI Phase 4 — Typecheck Fix V2",
+  "target_repo": "mohamedamouseo-a11y/TCRMHC",
+  "target_branch": "main",
+  "expected_head": "5ceb57cd3e02a65a993559dd199174625a503017",
+  "supersedes": "uxui/phase4-customers-typecheck-fix",
+  "expected_dirty_files": [
+    "apps/web/src/features/admin/TenantsPage.tsx",
+    "apps/web/src/features/admin/TenantDetailPage.tsx",
+    "apps/web/src/styles.css"
+  ],
+  "fixes": [
+    "NUL-delimited raw-byte porcelain parser that preserves leading status spaces",
+    "Omit optional search/status properties instead of explicitly assigning undefined"
+  ],
+  "final_commit_message": "feat: redesign customers management UX"
+}

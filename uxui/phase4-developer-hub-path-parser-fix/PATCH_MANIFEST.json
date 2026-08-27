@@ -1,0 +1,15 @@
+{
+  "name": "TCRMHC Phase 4 — Developer Hub Git Path Parser Fix",
+  "target_repo": "mohamedamouseo-a11y/TCRMHC",
+  "target_branch": "main",
+  "expected_head": "5ceb57cd3e02a65a993559dd199174625a503017",
+  "preexisting_dirty_files": [
+    "apps/web/src/features/admin/TenantsPage.tsx",
+    "apps/web/src/features/admin/TenantDetailPage.tsx",
+    "apps/web/src/styles.css"
+  ],
+  "new_dirty_file": "apps/api/src/modules/admin/developer-hub-github.service.ts",
+  "root_cause": "gitText trims leading porcelain status whitespace before fixed-column parseStatus",
+  "fix": "preserve raw stdout only for git status --porcelain=v1",
+  "expected_commit_message": "feat: finish customers UX and fix Developer Hub path parsing"
+}

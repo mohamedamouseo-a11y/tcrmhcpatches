@@ -1,0 +1,10 @@
+{
+  "name": "TCRMHC UX/UI Phase 4 — Typecheck Fix",
+  "target_repo": "mohamedamouseo-a11y/TCRMHC",
+  "target_branch": "main",
+  "expected_head": "5ceb57cd3e02a65a993559dd199174625a503017",
+  "precondition": "Phase 4 UI already applied and uncommitted; exactly TenantsPage.tsx, TenantDetailPage.tsx, styles.css are dirty",
+  "modified_file": "apps/web/src/features/admin/TenantsPage.tsx",
+  "fix": "Omit optional search/status properties instead of explicitly assigning undefined under exactOptionalPropertyTypes",
+  "final_commit_message": "feat: redesign customers management UX"
+}

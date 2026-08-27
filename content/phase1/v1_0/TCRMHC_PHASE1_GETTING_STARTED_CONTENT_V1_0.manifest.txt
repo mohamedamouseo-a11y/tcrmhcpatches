@@ -7,7 +7,7 @@ TARGET
 - Expected TCRMHC base HEAD at patch authoring: 6f1ad3d83ee42220e7a2016166e01570dd00a973
 - Patch repository: mohamedamouseo-a11y/tcrmhcpatches
 - Patch file: content/phase1/v1_0/TCRMHC_PHASE1_GETTING_STARTED_CONTENT_V1_0.patch
-- Patch SHA-256: fbb12061c9adfba3bb4b1bd1f2f9572e2ccd9f621861356e9e9714870deace64
+- Patch SHA-256: eaa078e406f4a29954e0d5069ebecf9ad54084bd86c5aa2ffbe87fda27637154
 
 SCOPE
 Adds exactly one TCRMHC migration:

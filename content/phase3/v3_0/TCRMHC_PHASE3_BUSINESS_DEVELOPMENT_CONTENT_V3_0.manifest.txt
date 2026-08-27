@@ -1,0 +1,146 @@
+TCRMHC_PHASE3_BUSINESS_DEVELOPMENT_CONTENT_V3_0
+Version: 3.0
+Created: 2026-08-27
+
+TARGET
+- Final repository: mohamedamouseo-a11y/TCRMHC
+- Expected TCRMHC base HEAD at patch authoring: 39195817b8e45850568401d77065d4b7132c0902
+- Patch repository: mohamedamouseo-a11y/tcrmhcpatches
+- Patch package: content/phase3/v3_0/TCRMHC_PHASE3_BUSINESS_DEVELOPMENT_CONTENT_V3_0.patch.gz.b64
+- Encoded package SHA-256: 53607e8700ccddf9750905900aa8fd4b515214aaa6a7bc0ea465ea2fb250e068
+- Decoded gzip SHA-256: 8b63ca5f0c8b590525fc126f0b530bb925091c07eda015d211edb9f3b7c4641e
+- Decoded patch SHA-256: 6767dcf2ca1f33bd5801958617b59e0b5f990184b4966ca138917f479d956f31
+
+SCOPE
+Adds exactly one TCRMHC migration:
+apps/api/src/db/migrations/0013_kb_phase3_business_development.sql
+
+Migration integrity:
+- Expected applied migration line count: 1227
+- Migration SHA-256: 7d491a5aa76f7617f545d85a6f74fada0436498e23bdcf480fa89269c6ec2668
+- Generated with git diff; hunk header is @@ -0,0 +1,1227 @@
+- Clean-repo git apply --check: PASS
+- Clean-repo git apply: PASS
+- Applied migration byte-for-byte comparison to source: PASS
+- Expected SQL tail closes with END $$; followed by COMMIT;
+
+HIERARCHY
+Reuses the existing TCRM module:
+- Module slug: tcrm / Tamiyouz CRM
+
+Creates or updates:
+- Category: tcrm-business-development
+  Arabic: تطوير الأعمال
+  English: Business Development
+- Subcategory: tcrm-bd-core
+  Arabic: تشغيل تطوير الأعمال
+  English: BD Operations
+
+ARTICLES
+Adds/updates exactly 9 published bilingual general articles:
+1. tcrm-bd-dashboard — التعرف على لوحة تطوير الأعمال في TCRM / Understanding the TCRM Business Development Dashboard
+2. tcrm-bd-deals — إدارة الصفقات وPipeline في تطوير الأعمال / Managing Business Development Deals and Pipelines
+3. tcrm-bd-companies — إدارة الشركات في تطوير الأعمال / Managing Companies in Business Development
+4. tcrm-bd-contacts — إدارة جهات الاتصال وصنّاع القرار في تطوير الأعمال / Managing Contacts and Decision Makers in Business Development
+5. tcrm-bd-analytics — قراءة تحليلات أداء تطوير الأعمال / Reading Business Development Performance Analytics
+6. tcrm-bd-coaching — استخدام لوحة Coaching لتطوير فريق المبيعات / Using the Coaching Dashboard to Develop the Sales Team
+7. tcrm-bd-email-templates — إنشاء واستخدام قوالب البريد في تطوير الأعمال / Creating and Using Business Development Email Templates
+8. tcrm-bd-quotations — إنشاء وإدارة عروض الأسعار للصفقات / Creating and Managing Quotations for Deals
+9. tcrm-bd-client-portal — استخدام رابط عرض السعر في بوابة العميل / Using the Quotation Link in the Client Portal
+
+All nine are:
+- status=published
+- visibility_scope=general
+- consumer_hidden=false
+- Arabic + English title/body non-empty
+- plain-text bodies compatible with TCRMHC SafeBody rendering
+- searchable through the existing kb_articles search_document trigger
+- idempotent by tenant_id + slug upsert
+
+SOURCE OF TRUTH
+Content was authored from current TCRM main behavior in:
+mohamedamouseo-a11y/TCRM-MAIN-Tamiyouz-CRM-
+
+Primary inspected files:
+- client/src/App.tsx
+- client/src/pages/BD/BDDashboard.tsx
+- client/src/pages/BD/DealsKanban.tsx
+- client/src/pages/BD/DealDetail.tsx
+- client/src/pages/BD/CompaniesList.tsx
+- client/src/pages/BD/ContactsList.tsx
+- client/src/pages/BD/BDAnalytics.tsx
+- client/src/pages/BD/BDCoaching.tsx
+- client/src/pages/BD/BDEmailTemplates.tsx
+- client/src/pages/BD/BDQuote.tsx
+- client/src/pages/BD/BDPortal.tsx
+
+VERIFIED PRODUCT BEHAVIOR REPRESENTED
+- BusinessDeveloper login route -> /bd
+- /bd dashboard KPIs, 30/60/90 weighted forecasts, goals, stale deals, funnel, hot deals, team overview where authorized
+- Cmd/Ctrl+K BD search for deals, companies, and contacts
+- /bd/deals pipeline selection, smart search, saved views, multi-select, bulk actions, drag/drop stage movement, new-deal form
+- /bd/deals/:id stage/probability/value/MRR/details, Lost reason flow, deal files, activities, AI insights
+- /bd/companies search/country filters and company creation fields
+- /bd/contacts search, company/source association, communication fields, Decision Maker flag
+- /bd/analytics top performers, loss analysis, source performance, stage conversion, 30-day activity volume
+- /bd/coaching 7/30/90-day periods, overview/leaderboard/deal-health/churn/sessions/targets, rep notes and AI plan
+- /bd/templates create/edit/delete/copy, categories, sharing, template placeholders
+- /bd/quote/:id quotation types, sections/items, autosave, revision conflicts, locked statuses, new versions, share and print
+- /portal/:token customer quotation display, version/link permissions, print/PDF, accept/change/reject decisions and link errors
+
+PRODUCTION EXECUTION NOTE
+The established TCRMHC production API runtime previously verified is:
+- PM2 process: tcrmhc-api
+- Launcher: /var/www/TCRMHC/apps/api/start-with-env.mjs
+- Existing environment source used by the launcher: /etc/tcrmhc/tcrmhc.env
+
+Run db:migrate and kb:ai-sync through the existing production runtime/environment without printing or persisting secret values. Do not invent a new .env file.
+
+REQUIRED EXECUTION ORDER
+1. Verify current /var/www/TCRMHC HEAD, branch, remote, and worktree.
+2. If HEAD differs from expected base, verify migration 0013 does not exist and run git apply --check before proceeding.
+3. Verify all package checksums.
+4. Decode package to a temporary patch.
+5. git apply --check.
+6. git apply.
+7. Verify migration line count, SHA-256, and SQL tail.
+8. Take the normal PostgreSQL production backup/snapshot.
+9. Run pnpm typecheck.
+10. Run pnpm db:migrate through the established production runtime environment.
+11. Run pnpm build.
+12. Verify exactly 9 Phase 3 rows and hierarchy.
+13. Run pnpm kb:ai-sync through the established production runtime environment; require failed=0.
+14. Reload the existing TCRMHC production service and verify HTTP 200 health.
+15. Live-test hierarchy, Arabic RTL, English LTR, representative articles, and search.
+16. Review diff/status, commit only migration 0013, and publish through the existing protected Developer Hub Review Push workflow to TCRMHC/main.
+
+LIVE SMOKE TARGETS
+Hierarchy:
+Tamiyouz CRM -> Business Development -> BD Operations
+
+Open at minimum:
+- tcrm-bd-dashboard in Arabic and English
+- tcrm-bd-deals
+- tcrm-bd-coaching
+- tcrm-bd-quotations
+- tcrm-bd-client-portal
+
+Search tests:
+Arabic:
+- تطوير الأعمال
+- عروض الأسعار
+English:
+- business development
+- deal coaching
+- client portal
+
+SECURITY / SCOPE
+- Do not modify TCRM main.
+- Do not modify the TCRM database.
+- Do not commit backups, logs, temporary decoded patches, or unrelated work.
+- Do not print or persist production secrets.
+- Final system commit scope must contain only:
+  apps/api/src/db/migrations/0013_kb_phase3_business_development.sql
+
+FINAL COMMIT MESSAGE
+feat: complete TCRMHC Phase 3 Business Development Content V3.0

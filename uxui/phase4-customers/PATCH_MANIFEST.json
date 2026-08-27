@@ -2,7 +2,7 @@
   "name": "TCRMHC UX/UI Phase 4 — Customers / Tenants",
   "target_repo": "mohamedamouseo-a11y/TCRMHC",
   "target_branch": "main",
-  "base_commit": "6f1ad3d83ee42220e7a2016166e01570dd00a973",
+  "base_commit": "5ceb57cd3e02a65a993559dd199174625a503017",
   "modified_files": [
     "apps/web/src/features/admin/TenantsPage.tsx",
     "apps/web/src/features/admin/TenantDetailPage.tsx",

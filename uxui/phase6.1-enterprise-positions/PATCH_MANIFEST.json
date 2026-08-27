@@ -1,0 +1,36 @@
+{
+  "name": "TCRMHC UX/UI Phase 6.1 — Enterprise Positions Polish",
+  "target_repo": "mohamedamouseo-a11y/TCRMHC",
+  "target_branch": "main",
+  "base_commit": "e9e25c3379d48ff356ced9bf2e8e86045fc157d3",
+  "modified_files": [
+    "apps/web/src/features/admin/PositionsPage.tsx",
+    "apps/web/src/styles.css"
+  ],
+  "visual_review_basis": "TCRMHC-UXUI-PHASE6-SCREENSHOTS.zip",
+  "review_findings": [
+    "Phase 6 is functional and consistent but visually reads as polished admin UI rather than enterprise-premium software.",
+    "The main screen has excessive unused canvas relative to the density of the directory data.",
+    "Typography, table hierarchy, and information density are too lightweight for an enterprise governance workspace.",
+    "Create Position is a conventional modal rather than a structured enterprise workflow.",
+    "Manage Position is a centered generic modal; Phase 6.1 turns it into a dedicated full-height governance workspace.",
+    "The existing Help Audience mapping is functional but needs stronger policy context and hierarchy.",
+    "Uploaded Phase 6 screenshot 02 is not actually Dark Mode.",
+    "Uploaded Phase 6 screenshots 08 and 09 are byte-identical despite Light/Dark labels.",
+    "Uploaded Phase 6 screenshots 10 and 12 are byte-identical, so Help Audience mapping coverage was duplicated rather than independently captured.",
+    "Mobile screenshots 14/15 and Execute-running screenshot 18 were not present."
+  ],
+  "scope": [
+    "Enterprise command-header treatment with real scope context",
+    "Three real operational summary cards using existing loaded data only",
+    "Enterprise directory heading and live catalog indicator",
+    "Stronger sticky data-grid hierarchy and row affordances",
+    "Structured three-section Create Position workflow",
+    "Full-height enterprise Position Governance workspace",
+    "Stronger Help Audience content-policy presentation",
+    "Distinct premium Light/Dark styling",
+    "RTL/LTR and mobile polish",
+    "No backend, database, authorization or API changes"
+  ],
+  "expected_commit_message": "feat: elevate positions UX to enterprise premium"
+}

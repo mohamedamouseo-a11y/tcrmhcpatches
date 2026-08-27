@@ -1,0 +1,35 @@
+{
+  "name": "TCRMHC UX/UI Phase 2 — Application Shell + Tamy Floating Agent",
+  "target_repo": "mohamedamouseo-a11y/TCRMHC",
+  "target_branch": "main",
+  "base_commit": "1910167e64182cfd0df7f2fcb2afe725cc4134ac",
+  "prerequisite": "Phase 1.1 applied and clean worktree",
+  "new_files": [
+    "apps/web/src/features/TamyFloatingAgent.tsx"
+  ],
+  "modified_files": [
+    "apps/web/src/features/admin/AdminLayout.tsx",
+    "apps/web/src/styles.css"
+  ],
+  "scope": [
+    "Professional application shell polish",
+    "Responsive mobile navigation drawer instead of stacked sidebar",
+    "Improved sticky topbar and page context",
+    "Light/Dark semantic shell polish",
+    "Tamy floating draggable AI launcher",
+    "Persistent Tamy launcher position",
+    "Tamy AI panel dock left/right with persisted dock side",
+    "Reuse existing private AI support agent/backend",
+    "Mobile Tamy panel behavior",
+    "Accessibility and reduced-motion behavior"
+  ],
+  "non_scope": [
+    "Individual page redesign",
+    "Backend/API changes",
+    "Database changes",
+    "TCRM Main",
+    "New AI provider",
+    "AI Staff routing beyond the existing support agent"
+  ],
+  "expected_commit_message": "feat: upgrade app shell and add Tamy floating AI"
+}

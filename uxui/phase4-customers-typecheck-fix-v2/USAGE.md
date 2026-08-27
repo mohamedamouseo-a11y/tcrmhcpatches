@@ -1,0 +1,1 @@
+Use `APPLY-TCRMHC-PHASE4-TYPECHECK-FIX-V2.py` from `/var/www/TCRMHC` while the approved Phase 4 three-file worktree is still present. Then rerun web typecheck/build and continue the original Phase 4 QA and Developer Hub Review/Execute flow.

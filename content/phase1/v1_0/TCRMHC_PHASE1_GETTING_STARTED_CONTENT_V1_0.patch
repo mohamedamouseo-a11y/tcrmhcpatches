@@ -1,0 +1,744 @@
+diff --git a/apps/api/src/db/migrations/0011_kb_phase1_getting_started.sql b/apps/api/src/db/migrations/0011_kb_phase1_getting_started.sql
+new file mode 100644
+index 0000000..fbf7f5e
+--- /dev/null
++++ b/apps/api/src/db/migrations/0011_kb_phase1_getting_started.sql
+@@ -0,0 +1,729 @@
++BEGIN;
++
++DO $$
++DECLARE
++  owner_tenant uuid;
++  module_id uuid;
++  category_id uuid;
++  subcategory_id uuid;
++  published_count integer;
++BEGIN
++  SELECT id
++  INTO owner_tenant
++  FROM tenants
++  WHERE status = 'active'
++  ORDER BY id
++  LIMIT 1;
++
++  IF owner_tenant IS NULL THEN
++    RAISE EXCEPTION 'TCRMHC_PHASE1_REQUIRES_ACTIVE_TENANT';
++  END IF;
++
++  INSERT INTO kb_modules (
++    tenant_id,
++    title_ar,
++    title_en,
++    slug,
++    description_ar,
++    description_en,
++    status,
++    sort_order
++  )
++  VALUES (
++    owner_tenant,
++    'Tamiyouz CRM',
++    'Tamiyouz CRM',
++    'tcrm',
++    'دليل استخدام Tamiyouz CRM المبني على وظائف النظام الفعلية.',
++    'Tamiyouz CRM user documentation based on the product''s actual behavior.',
++    'active',
++    10
++  )
++  ON CONFLICT (tenant_id, slug) DO UPDATE
++  SET title_ar = EXCLUDED.title_ar,
++      title_en = EXCLUDED.title_en,
++      description_ar = EXCLUDED.description_ar,
++      description_en = EXCLUDED.description_en,
++      status = EXCLUDED.status,
++      sort_order = EXCLUDED.sort_order,
++      updated_at = now()
++  RETURNING id INTO module_id;
++
++  INSERT INTO kb_categories (
++    tenant_id,
++    module_id,
++    title_ar,
++    title_en,
++    slug,
++    description_ar,
++    description_en,
++    status,
++    sort_order
++  )
++  VALUES (
++    owner_tenant,
++    module_id,
++    'البداية واستخدام TCRM',
++    'Getting Started with TCRM',
++    'tcrm-getting-started',
++    'ابدأ باستخدام TCRM وتعرّف على لوحة التحكم والتنقل وتسجيل الدخول والبحث واللغة والمظهر والإشعارات والصلاحيات.',
++    'Learn the TCRM basics: dashboard, navigation, sign-in, search, language, appearance, notifications, and role-based access.',
++    'active',
++    10
++  )
++  ON CONFLICT (tenant_id, slug) DO UPDATE
++  SET module_id = EXCLUDED.module_id,
++      title_ar = EXCLUDED.title_ar,
++      title_en = EXCLUDED.title_en,
++      description_ar = EXCLUDED.description_ar,
++      description_en = EXCLUDED.description_en,
++      status = EXCLUDED.status,
++      sort_order = EXCLUDED.sort_order,
++      updated_at = now()
++  RETURNING id INTO category_id;
++
++  INSERT INTO kb_subcategories (
++    tenant_id,
++    category_id,
++    title_ar,
++    title_en,
++    slug,
++    description_ar,
++    description_en,
++    status,
++    sort_order
++  )
++  VALUES (
++    owner_tenant,
++    category_id,
++    'الأساسيات',
++    'Core Basics',
++    'tcrm-core-basics',
++    'الخطوات الأساسية التي يحتاجها أي مستخدم جديد قبل الانتقال إلى وحدات العمل المتخصصة.',
++    'The essential steps every new user needs before moving into specialized work modules.',
++    'active',
++    10
++  )
++  ON CONFLICT (tenant_id, slug) DO UPDATE
++  SET category_id = EXCLUDED.category_id,
++      title_ar = EXCLUDED.title_ar,
++      title_en = EXCLUDED.title_en,
++      description_ar = EXCLUDED.description_ar,
++      description_en = EXCLUDED.description_en,
++      status = EXCLUDED.status,
++      sort_order = EXCLUDED.sort_order,
++      updated_at = now()
++  RETURNING id INTO subcategory_id;
++
++  INSERT INTO kb_articles (
++    tenant_id,
++    module_id,
++    category_id,
++    subcategory_id,
++    slug,
++    title_ar,
++    title_en,
++    excerpt_ar,
++    excerpt_en,
++    body_ar,
++    body_en,
++    status,
++    sort_order,
++    seo_title_ar,
++    seo_title_en,
++    seo_description_ar,
++    seo_description_en,
++    published_at,
++    visibility_scope,
++    consumer_hidden,
++    canonical_article_id,
++    media
++  )
++  VALUES (
++    owner_tenant, module_id, category_id, subcategory_id, 'tcrm-dashboard-overview',
++    'التعرف على لوحة التحكم الرئيسية في TCRM',
++    'Understanding the Main TCRM Dashboard',
++    'تعرّف على مؤشرات لوحة التحكم، نطاق التاريخ، قوائم العملاء المحتملين، وما الذي يتغير حسب دورك.',
++    'Learn the dashboard KPIs, date range, lead lists, and how the starting dashboard changes by role.',
++    $ar$لوحة التحكم هي نقطة البداية الأساسية لمعظم مستخدمي TCRM. تعرض لك ملخصًا سريعًا للعمل اليومي والنتائج المهمة، وتربط كل مؤشر مباشرة بالبيانات المرتبطة به.
++
++1. افتح لوحة التحكم
++بعد تسجيل الدخول، ينتقل معظم المستخدمين إلى /dashboard. بعض الأدوار تذهب تلقائيًا إلى لوحة متخصصة: Business Developer إلى /bd، وTechnical Account Manager إلى /tam-dashboard، بينما Account Manager وAccount Manager Lead يتم توجيههم إلى لوحة AM الخاصة بهم.
++
++2. اختر الفترة الزمنية
++في أعلى لوحة التحكم يوجد Date Range Picker. استخدمه لتغيير الفترة التي تُحسب عليها مؤشرات الأداء. يبدأ النظام افتراضيًا بنطاق الشهر الحالي.
++
++3. راجع مؤشرات الأداء الرئيسية
++تعرض اللوحة حاليًا المؤشرات التالية:
++• Total Leads: إجمالي العملاء المحتملين ضمن النطاق المحدد.
++• Total Activities: إجمالي الأنشطة المسجلة.
++• Won Deals: الصفقات التي وصلت إلى Won.
++• Total Revenue: إيراد الصفقات المغلقة Won وفق تاريخ الإغلاق.
++• Potential Revenue: القيمة المحتملة للصفقات المفتوحة التي لم تُغلق بعد.
++• SLA Alerts: الحالات التي تجاوزت زمن الاستجابة المحدد.
++• Contact to Meeting: نسبة العملاء الذين تم التواصل معهم ووصلوا إلى Meeting Scheduled.
++• Meeting to Close: نسبة العملاء الذين وصلوا للاجتماع ثم تحولت صفقتهم إلى Won.
++
++4. انتقل من المؤشر إلى البيانات
++كل بطاقة KPI قابلة للضغط. الضغط عليها ينقلك إلى قائمة العملاء مع الفلتر المناسب، مثل Won أو SLA Breached أو Meeting Scheduled.
++
++5. استخدم قوائم العملاء أسفل المؤشرات
++توجد ثلاثة تبويبات أساسية:
++• My Leads: العملاء المحتملون المرتبطون بك.
++• Shared: العملاء المشترك العمل عليهم معك.
++• Watching: العملاء الذين تتابعهم بدون أن تكون المالك الرئيسي.
++قد يظهر بجانب العميل تنبيه SLA إذا تم تجاوز الزمن المحدد.
++
++6. افتح ملف العميل
++اضغط على أي عميل من القائمة للانتقال مباشرة إلى ملفه ومتابعة التفاصيل والأنشطة.
++
++مهم: الأرقام التي تراها تعتمد على دورك وصلاحياتك. المدير قد يرى إحصائيات الفريق، بينما مندوب المبيعات يرى النطاق المسموح له فقط.$ar$,
++    $en$The dashboard is the main starting point for most TCRM users. It gives you a fast summary of daily work and key outcomes, and each KPI links directly to the related records.
++
++1. Open the dashboard
++After sign-in, most users are sent to /dashboard. Some roles are routed to a specialized dashboard automatically: Business Developer goes to /bd, Technical Account Manager goes to /tam-dashboard, and Account Manager or Account Manager Lead is redirected to the AM dashboard.
++
++2. Choose the date range
++Use the Date Range Picker at the top of the page to control the period used for dashboard metrics. The current month is the default range.
++
++3. Review the main KPIs
++The dashboard currently includes:
++• Total Leads: leads included in the selected period.
++• Total Activities: recorded CRM activities.
++• Won Deals: deals that reached the Won stage.
++• Total Revenue: revenue from Won deals based on close date.
++• Potential Revenue: expected value of still-open deals.
++• SLA Alerts: records that exceeded the configured SLA response time.
++• Contact to Meeting: percentage of contacted leads that reached Meeting Scheduled.
++• Meeting to Close: percentage of meeting-stage leads that became Won deals.
++
++4. Move from a KPI to the records
++Each KPI card is clickable and opens the related lead list with an appropriate filter, such as Won, SLA Breached, or Meeting Scheduled.
++
++5. Use the lead tabs below the KPIs
++The dashboard contains three main tabs:
++• My Leads: leads assigned to you.
++• Shared: leads where you collaborate with another owner.
++• Watching: leads you follow without being the main owner.
++An SLA badge can appear on records that exceeded the required response time.
++
++6. Open a lead profile
++Select a lead in the list to open its profile and continue with its details and activities.
++
++Important: the numbers and records you can see depend on your role and permissions. A manager can see team-level statistics while a sales user sees only the scope allowed for that role.$en$,
++    'published', 10,
++    'لوحة التحكم في TCRM: شرح المؤشرات والاستخدام',
++    'TCRM Dashboard: KPIs and Usage Guide',
++    'شرح عملي للوحة التحكم الرئيسية في TCRM ومؤشرات Leads وActivities وRevenue وSLA ونسب التحويل.',
++    'Practical guide to the TCRM dashboard, including leads, activities, revenue, SLA, and conversion KPIs.',
++    now(), 'general', false, NULL, '[]'::jsonb
++  )
++  ON CONFLICT (tenant_id, slug) DO UPDATE SET
++    module_id = EXCLUDED.module_id,
++    category_id = EXCLUDED.category_id,
++    subcategory_id = EXCLUDED.subcategory_id,
++    title_ar = EXCLUDED.title_ar,
++    title_en = EXCLUDED.title_en,
++    excerpt_ar = EXCLUDED.excerpt_ar,
++    excerpt_en = EXCLUDED.excerpt_en,
++    body_ar = EXCLUDED.body_ar,
++    body_en = EXCLUDED.body_en,
++    status = EXCLUDED.status,
++    sort_order = EXCLUDED.sort_order,
++    seo_title_ar = EXCLUDED.seo_title_ar,
++    seo_title_en = EXCLUDED.seo_title_en,
++    seo_description_ar = EXCLUDED.seo_description_ar,
++    seo_description_en = EXCLUDED.seo_description_en,
++    published_at = COALESCE(kb_articles.published_at, now()),
++    visibility_scope = 'general',
++    consumer_hidden = false,
++    canonical_article_id = NULL,
++    media = EXCLUDED.media,
++    updated_at = now();
++
++  INSERT INTO kb_articles (
++    tenant_id,module_id,category_id,subcategory_id,slug,title_ar,title_en,excerpt_ar,excerpt_en,
++    body_ar,body_en,status,sort_order,seo_title_ar,seo_title_en,seo_description_ar,seo_description_en,
++    published_at,visibility_scope,consumer_hidden,canonical_article_id,media
++  ) VALUES (
++    owner_tenant, module_id, category_id, subcategory_id, 'tcrm-navigation-sidebar',
++    'التنقل داخل TCRM واستخدام القائمة الجانبية',
++    'Navigating TCRM and Using the Sidebar',
++    'اعرف كيف تتحرك بين أقسام TCRM، ولماذا تظهر بعض الأقسام لمستخدمين دون غيرهم.',
++    'Learn how to move through TCRM and why some navigation sections are visible only to specific roles.',
++    $ar$القائمة الجانبية في TCRM ليست قائمة ثابتة لكل المستخدمين. النظام يبني ما يظهر لك بناءً على دورك وصلاحياتك، لذلك قد ترى أقسامًا مختلفة عن مستخدم آخر.
++
++1. افتح القائمة الجانبية
++على سطح المكتب يمكن إبقاء القائمة مفتوحة أو مطوية. وعلى الهاتف توجد قائمة مخصصة للموبايل. النظام يحافظ على موضع التمرير داخل القائمة أثناء التنقل بين الصفحات.
++
++2. استخدم العناصر الرئيسية
++بحسب صلاحيتك قد تجد عناصر مباشرة مثل Dashboard وInbox وCentral Chat وTHRS وWorkspace وSettings وSupport Center، إضافة إلى أدوات الإدارة مثل Import وTrash وAudit Log للمستخدمين المصرح لهم.
++
++3. افتح مجموعات العمل
++بعض الوظائف منظمة داخل مجموعات قابلة للفتح والإغلاق، ومنها:
++• Sales: Team Dashboard وLeads وSales Funnel وTask SLA وCalendar.
++• Marketing: Meta وTikTok وGoogle Ads وSnapchat وLinkedIn.
++• WhatsApp: Inbox وAccounts & QR للحسابات المصرح لها.
++• AI Staff: Tara وZaghloul وFelfel وDarwish وShawky وWadie، وتختلف إمكانية الوصول لكل موظف ذكي حسب الدور.
++• Account Management / Operations: صفحات AM والعملاء والتجديدات والـworkflow والعمليات حسب الدور.
++• Business Development: Dashboard وDeals وCompanies وContacts وAnalytics وTemplates وCoaching وغيرها للمصرح لهم.
++
++4. راقب التنبيهات داخل القائمة
++قسم Sales قد يعرض Badge لعدد حالات SLA غير المشاهدة. هذه العلامة تساعدك على معرفة وجود حالات تحتاج تدخلًا بدون فتح صفحة الـSLA أولًا.
++
++5. افهم سبب اختفاء عنصر
++إذا لم تجد صفحة في القائمة فهذا لا يعني بالضرورة وجود مشكلة. TCRM يفلتر عناصر التنقل حسب الدور والصلاحيات. بعض الأدوار، مثل Business Developer، لها نطاق تنقل مقيد بالصفحات الخاصة بعملها. كما توجد قيود إضافية لبعض أدوار المراجعة أو الإشراف.
++
++6. استخدم الرابط المباشر فقط إذا كانت لديك صلاحية
++إخفاء العنصر من القائمة جزء من التحكم في الوصول، لكنه ليس بديلًا عن صلاحيات الخادم. إذا لم تكن مخولًا بصفحة معينة فقد يمنع النظام الوصول إليها حتى باستخدام الرابط المباشر.$ar$,
++    $en$The TCRM sidebar is not identical for every user. The system builds your navigation from your role and permissions, so another user can legitimately see a different set of sections.
++
++1. Open or collapse the sidebar
++On desktop, the sidebar can stay expanded or collapsed. Mobile uses its own navigation state. TCRM also preserves the sidebar scroll position while you move between pages.
++
++2. Use the main navigation items
++Depending on your permissions, direct entries can include Dashboard, Inbox, Central Chat, THRS, Workspace, Settings, and Support Center. Authorized administrative users can also see items such as Import, Trash, and Audit Log.
++
++3. Expand grouped work areas
++Several areas are organized into collapsible groups, including:
++• Sales: Team Dashboard, Leads, Sales Funnel, Task SLA, and Calendar.
++• Marketing: Meta, TikTok, Google Ads, Snapchat, and LinkedIn.
++• WhatsApp: Inbox plus Accounts & QR for authorized users.
++• AI Staff: Tara, Zaghloul, Felfel, Darwish, Shawky, and Wadie. Access to each AI staff member is role controlled.
++• Account Management / Operations: AM dashboards, clients, renewals, workflow, and operations pages depending on role.
++• Business Development: dashboard, deals, companies, contacts, analytics, templates, coaching, and related tools for authorized users.
++
++4. Watch navigation badges
++The Sales group can show a badge for unseen SLA items. This gives you an immediate signal that action is required without opening the SLA page first.
++
++5. Understand why an item may be missing
++If you cannot see a page in the sidebar, that does not automatically indicate an error. TCRM filters navigation by role and permission. Business Developer, for example, uses a restricted set of BD-related destinations, and moderator-type roles can have additional route restrictions.
++
++6. Use direct links only within your access scope
++Hiding a navigation item is one layer of the access model, not a replacement for server authorization. If your role is not allowed to use a page, the system can block access even when you know its direct URL.$en$,
++    'published', 20,
++    'التنقل والقائمة الجانبية في TCRM', 'TCRM Navigation and Sidebar Guide',
++    'دليل القائمة الجانبية ومجموعات Sales وMarketing وWhatsApp وAI Staff وBD والصلاحيات.',
++    'Guide to the TCRM sidebar, grouped work areas, navigation badges, and role-based visibility.',
++    now(),'general',false,NULL,'[]'::jsonb
++  ) ON CONFLICT (tenant_id,slug) DO UPDATE SET
++    module_id=EXCLUDED.module_id,category_id=EXCLUDED.category_id,subcategory_id=EXCLUDED.subcategory_id,
++    title_ar=EXCLUDED.title_ar,title_en=EXCLUDED.title_en,excerpt_ar=EXCLUDED.excerpt_ar,excerpt_en=EXCLUDED.excerpt_en,
++    body_ar=EXCLUDED.body_ar,body_en=EXCLUDED.body_en,status=EXCLUDED.status,sort_order=EXCLUDED.sort_order,
++    seo_title_ar=EXCLUDED.seo_title_ar,seo_title_en=EXCLUDED.seo_title_en,
++    seo_description_ar=EXCLUDED.seo_description_ar,seo_description_en=EXCLUDED.seo_description_en,
++    published_at=COALESCE(kb_articles.published_at,now()),visibility_scope='general',consumer_hidden=false,
++    canonical_article_id=NULL,media=EXCLUDED.media,updated_at=now();
++
++  INSERT INTO kb_articles (
++    tenant_id,module_id,category_id,subcategory_id,slug,title_ar,title_en,excerpt_ar,excerpt_en,
++    body_ar,body_en,status,sort_order,seo_title_ar,seo_title_en,seo_description_ar,seo_description_en,
++    published_at,visibility_scope,consumer_hidden,canonical_article_id,media
++  ) VALUES (
++    owner_tenant,module_id,category_id,subcategory_id,'tcrm-login-account-security',
++    'تسجيل الدخول إلى TCRM وحماية الحساب',
++    'Signing In to TCRM and Protecting Your Account',
++    'شرح تسجيل الدخول بالبريد وكلمة المرور، التحقق بخطوتين، Google، واستعادة كلمة المرور.',
++    'Understand email/password sign-in, two-factor verification, Google sign-in, and password recovery.',
++    $ar$يدعم TCRM أكثر من مسار لتسجيل الدخول، وقد يطلب تحققًا إضافيًا حسب إعدادات الأمان على حسابك.
++
++1. أدخل البريد الإلكتروني وكلمة المرور
++في صفحة Login اكتب بريدك الإلكتروني وكلمة المرور ثم أرسل النموذج. إذا كان أحد الحقلين فارغًا سيطلب منك النظام إكمال البيانات. إذا كانت البيانات غير صحيحة سيظهر تنبيه بأن البريد أو كلمة المرور غير صحيحة.
++
++2. إظهار أو إخفاء كلمة المرور
++يمكن استخدام زر العين بجانب حقل كلمة المرور للتبديل بين إظهارها وإخفائها أثناء الكتابة.
++
++3. أكمل التحقق بخطوتين عند طلبه
++إذا كان الحساب يتطلب 2FA، لا يعتبر تسجيل الدخول مكتملًا بعد كلمة المرور. يرسل النظام رمز تحقق إلى البريد الإلكتروني ويعرض حقل OTP. أدخل رمزًا مكونًا من 6 أرقام. إذا كان الرمز غير صحيح أو منتهيًا سيظهر تنبيه مناسب.
++
++4. استخدم تسجيل الدخول عبر Google إذا كان متاحًا
++صفحة الدخول تدعم بدء Google Login من مسار المصادقة المخصص. إذا فشل تسجيل الدخول عبر Google تظهر رسالة خطأ بدل الدخول للنظام.
++
++5. استخدم استعادة كلمة المرور عند الحاجة
++صفحة Login تتحقق من توفر خدمة Password Recovery وتعرض مسار استعادة كلمة المرور عندما تكون الخدمة مفعلة. استخدمها بدل محاولة كلمات مرور متعددة بشكل متكرر.
++
++6. ماذا يحدث بعد نجاح الدخول؟
++بعد نجاح المصادقة يحدث Refresh لبيانات المستخدم ثم يحدد TCRM وجهتك حسب الدور:
++• Business Developer → /bd
++• Technical Account Manager → /tam-dashboard
++• باقي الأدوار الأساسية → /dashboard، مع إمكانية إعادة توجيه بعض الأدوار لاحقًا إلى لوحاتها المتخصصة.
++
++نصيحة أمان: لا تشارك كلمة المرور أو رمز التحقق المرسل إلى بريدك مع أي شخص. إذا لم تكن أنت من بدأ محاولة تسجيل الدخول، لا تستخدم رمز التحقق.$ar$,
++    $en$TCRM supports more than one sign-in path and can require an additional verification step depending on your account security configuration.
++
++1. Enter your email and password
++On the Login page, enter your email address and password and submit the form. TCRM prompts you when either field is empty. Invalid credentials return an "Invalid email or password" error.
++
++2. Show or hide the password
++Use the eye control beside the password field to toggle password visibility while typing.
++
++3. Complete two-factor verification when required
++If your account requires 2FA, successful password validation is not the end of sign-in. TCRM sends a verification code to your email and displays an OTP field. Enter the 6-digit code. An invalid or expired code produces a verification error.
++
++4. Use Google sign-in when available
++The Login page can start the configured Google authentication flow. If Google sign-in fails, TCRM shows an error instead of creating a logged-in session.
++
++5. Use password recovery when needed
++The Login page checks whether password recovery is available and exposes the recovery path when the service is enabled. Use recovery rather than repeatedly trying passwords you are unsure about.
++
++6. What happens after successful sign-in?
++After authentication, TCRM refreshes the user session and chooses the starting route by role:
++• Business Developer → /bd
++• Technical Account Manager → /tam-dashboard
++• Most other core roles → /dashboard, with some roles subsequently redirected to their own specialized dashboard.
++
++Security tip: never share your password or an email verification code. If you did not initiate the sign-in attempt, do not use the code.$en$,
++    'published',30,
++    'تسجيل الدخول وحماية حساب TCRM','TCRM Sign-In and Account Security',
++    'كيفية تسجيل الدخول إلى TCRM واستخدام 2FA وGoogle واستعادة كلمة المرور بأمان.',
++    'How to sign in to TCRM using password, 2FA, Google authentication, and password recovery.',
++    now(),'general',false,NULL,'[]'::jsonb
++  ) ON CONFLICT (tenant_id,slug) DO UPDATE SET
++    module_id=EXCLUDED.module_id,category_id=EXCLUDED.category_id,subcategory_id=EXCLUDED.subcategory_id,
++    title_ar=EXCLUDED.title_ar,title_en=EXCLUDED.title_en,excerpt_ar=EXCLUDED.excerpt_ar,excerpt_en=EXCLUDED.excerpt_en,
++    body_ar=EXCLUDED.body_ar,body_en=EXCLUDED.body_en,status=EXCLUDED.status,sort_order=EXCLUDED.sort_order,
++    seo_title_ar=EXCLUDED.seo_title_ar,seo_title_en=EXCLUDED.seo_title_en,
++    seo_description_ar=EXCLUDED.seo_description_ar,seo_description_en=EXCLUDED.seo_description_en,
++    published_at=COALESCE(kb_articles.published_at,now()),visibility_scope='general',consumer_hidden=false,
++    canonical_article_id=NULL,media=EXCLUDED.media,updated_at=now();
++
++  INSERT INTO kb_articles (
++    tenant_id,module_id,category_id,subcategory_id,slug,title_ar,title_en,excerpt_ar,excerpt_en,
++    body_ar,body_en,status,sort_order,seo_title_ar,seo_title_en,seo_description_ar,seo_description_en,
++    published_at,visibility_scope,consumer_hidden,canonical_article_id,media
++  ) VALUES (
++    owner_tenant,module_id,category_id,subcategory_id,'tcrm-global-search',
++    'استخدام البحث الشامل والبحث الصوتي في TCRM',
++    'Using Global Search and Voice Search in TCRM',
++    'ابحث بسرعة في العملاء والصفقات والشركات وجهات الاتصال باستخدام لوحة المفاتيح أو الصوت.',
++    'Quickly search clients, deals, companies, and contacts using the keyboard or voice.',
++    $ar$البحث الشامل في TCRM مصمم للوصول إلى السجل المطلوب بدون التنقل يدويًا بين أكثر من قسم.
++
++1. افتح Global Search
++استخدم Ctrl + K على Windows/Linux أو Cmd + K على macOS. نفس الاختصار يغلق نافذة البحث إذا كانت مفتوحة. ويمكنك الضغط على Escape لإغلاقها.
++
++2. اكتب حرفين على الأقل
++لا يبدأ البحث قبل إدخال حرفين أو أكثر. بعد ذلك ينتظر النظام فترة قصيرة أثناء الكتابة ثم يجلب النتائج.
++
++3. ما الذي يبحث فيه النظام؟
++نتائج البحث يمكن أن تشمل:
++• Clients
++• Deals
++• Companies
++• Contacts
++إظهار Clients داخل البحث يعتمد على دور المستخدم وصلاحية تضمين العملاء في نطاق البحث.
++
++4. استخدم بيانات طبيعية للبحث
++البحث لا يعتمد فقط على الاسم الرئيسي. بحسب نوع السجل يمكنه الاستفادة من بيانات مثل اسم العميل أو المسؤول أو المجموعة أو الخدمة أو الهاتف أو البريد، وعنوان الصفقة ومرحلتها، واسم الشركة ومجالها ودولتها، واسم جهة الاتصال ووظيفتها وبريدها.
++
++5. استخدم البحث الصوتي
++داخل نافذة البحث يوجد زر Voice Search. عند اختيار العربية يستخدم النظام ar-EG، وعند اختيار الإنجليزية يستخدم en-US. اضغط الزر وابدأ الكلام، ثم يستخدم النص الناتج كعبارة البحث. إذا كان المتصفح لا يدعم البحث الصوتي سيعرض النظام رسالة بذلك.
++
++6. اختر النتيجة
++الضغط على نتيجة يفتح سجلها مباشرة: العميل في ملف Client، والصفقة في Deal Detail، وكذلك الشركة أو جهة الاتصال في صفحاتها.
++
++7. ترتيب النتائج يتحسن مع استخدامك
++TCRM يحتفظ بملف تعلم محلي لاختيارات البحث الخاصة بالمستخدم ويضيف Boost للسجلات التي تختارها، لذلك يمكن أن يتكيف ترتيب الاقتراحات والنتائج مع استخدامك بمرور الوقت.
++
++نصيحة: إذا ظهرت نتائج كثيرة، استخدم معلومة أكثر تحديدًا مثل البريد أو الهاتف أو اسم الشركة بدل كلمة عامة.$ar$,
++    $en$TCRM Global Search is designed to get you to the right record without manually navigating through multiple modules.
++
++1. Open Global Search
++Use Ctrl + K on Windows/Linux or Cmd + K on macOS. The same shortcut toggles the search window. Press Escape to close it.
++
++2. Type at least two characters
++Search does not run until the normalized query contains two or more characters. TCRM then uses a short typing delay before loading results.
++
++3. What can Global Search find?
++Results can include:
++• Clients
++• Deals
++• Companies
++• Contacts
++Client results are included only when the current user role is allowed to search client records.
++
++4. Search using natural record information
++Search is not limited to one title field. Depending on the record type, ranking can use client names, business profile, contact person, group, services, phone, and email; deal title and stage; company name, industry, and country; and contact name, job title, and email.
++
++5. Use Voice Search
++The search dialog includes a Voice Search control. Arabic uses ar-EG and English uses en-US. Start listening, speak your query, and TCRM uses the transcript as the search text. If speech recognition is unsupported, the interface tells you.
++
++6. Select a result
++Selecting a result opens the related record directly: a client profile, deal detail, company, or contact page.
++
++7. Ranking adapts to your usage
++TCRM stores a local search-learning profile for the user and boosts records that have been selected before. Over time, this can improve the ordering of autocomplete suggestions and search results for your own usage.
++
++Tip: when a broad query returns too many matches, use a more specific value such as an email, phone number, or company name.$en$,
++    'published',40,
++    'البحث الشامل والصوتي في TCRM','TCRM Global and Voice Search',
++    'شرح Ctrl/Cmd+K والبحث في Clients وDeals وCompanies وContacts والبحث الصوتي والترتيب الذكي.',
++    'Guide to Ctrl/Cmd+K, Clients/Deals/Companies/Contacts search, voice input, and adaptive ranking.',
++    now(),'general',false,NULL,'[]'::jsonb
++  ) ON CONFLICT (tenant_id,slug) DO UPDATE SET
++    module_id=EXCLUDED.module_id,category_id=EXCLUDED.category_id,subcategory_id=EXCLUDED.subcategory_id,
++    title_ar=EXCLUDED.title_ar,title_en=EXCLUDED.title_en,excerpt_ar=EXCLUDED.excerpt_ar,excerpt_en=EXCLUDED.excerpt_en,
++    body_ar=EXCLUDED.body_ar,body_en=EXCLUDED.body_en,status=EXCLUDED.status,sort_order=EXCLUDED.sort_order,
++    seo_title_ar=EXCLUDED.seo_title_ar,seo_title_en=EXCLUDED.seo_title_en,
++    seo_description_ar=EXCLUDED.seo_description_ar,seo_description_en=EXCLUDED.seo_description_en,
++    published_at=COALESCE(kb_articles.published_at,now()),visibility_scope='general',consumer_hidden=false,
++    canonical_article_id=NULL,media=EXCLUDED.media,updated_at=now();
++
++  INSERT INTO kb_articles (
++    tenant_id,module_id,category_id,subcategory_id,slug,title_ar,title_en,excerpt_ar,excerpt_en,
++    body_ar,body_en,status,sort_order,seo_title_ar,seo_title_en,seo_description_ar,seo_description_en,
++    published_at,visibility_scope,consumer_hidden,canonical_article_id,media
++  ) VALUES (
++    owner_tenant,module_id,category_id,subcategory_id,'tcrm-language-theme',
++    'تغيير اللغة والوضع الفاتح أو الداكن في TCRM',
++    'Changing Language and Light or Dark Mode in TCRM',
++    'تعرف على دعم العربية والإنجليزية، اتجاه RTL/LTR، وكيف يحتفظ TCRM بتفضيلات اللغة والمظهر.',
++    'Learn how Arabic/English, RTL/LTR, and saved light/dark preferences work in TCRM.',
++    $ar$يدعم TCRM العربية والإنجليزية، كما يدعم الوضع الفاتح والداكن في الأجزاء التي تعمل داخل ThemeProvider القابل للتبديل.
++
++1. تغيير اللغة
++استخدم زر أو اختيار اللغة الموجود في واجهة TCRM للتبديل بين العربية والإنجليزية. اللغة الافتراضية هي العربية عندما لا توجد تفضيلات محفوظة سابقًا.
++
++2. ماذا يحدث عند اختيار العربية؟
++عند استخدام العربية يضبط النظام اتجاه الصفحة إلى RTL ويحدث خصائص HTML الخاصة باللغة والاتجاه، بحيث تظهر المكونات الداعمة للترجمة بالاتجاه المناسب.
++
++3. ماذا يحدث عند اختيار الإنجليزية؟
++عند استخدام الإنجليزية يصبح اتجاه الصفحة LTR وتستخدم الواجهة النصوص الإنجليزية المتوفرة، مع fallback إلى الإنجليزية للمفاتيح التي لا يتوفر لها نص باللغة المختارة.
++
++4. هل يحتفظ النظام باللغة؟
++نعم. TCRM يحفظ اللغة محليًا في المتصفح تحت مفتاح crm-lang. عند فتح النظام مرة أخرى على نفس المتصفح يحاول استخدام اللغة المحفوظة.
++
++5. تغيير الوضع الفاتح والداكن
++عندما يكون تبديل المظهر متاحًا، استخدم زر Theme للتبديل بين Light وDark. الإعداد الافتراضي في التطبيق الرئيسي هو Light.
++
++6. هل يحتفظ النظام بالمظهر؟
++نعم، عندما تكون خاصية تبديل المظهر مفعلة يحفظ TCRM الاختيار في المتصفح تحت مفتاح theme، ثم يعيده في الزيارة التالية.
++
++7. إذا لم يتغير جزء من الصفحة
++بعض المكونات قد تكون مرتبطة بتصميم أو Token خاص بها. تأكد أولًا أن زر التبديل متاح في الصفحة وأنك لا تستخدم نافذة أو جزءًا خارج ThemeProvider الرئيسي.
++
++ملاحظة: تفضيلات اللغة والمظهر المحفوظة هنا مرتبطة بالمتصفح المحلي، وليست بالضرورة إعدادًا مركزيًا للحساب على كل جهاز.$ar$,
++    $en$TCRM supports Arabic and English and also supports light and dark mode in areas rendered inside a switchable ThemeProvider.
++
++1. Change the language
++Use the language control in the TCRM interface to switch between Arabic and English. Arabic is the default when no previous language preference is stored.
++
++2. What happens in Arabic?
++When Arabic is selected, TCRM sets the document direction to RTL and updates the HTML language and direction attributes so translated components render in the correct direction.
++
++3. What happens in English?
++English uses LTR direction and the English translation set. Translation lookup also falls back to English when a key is missing in the selected language.
++
++4. Does TCRM remember the language?
++Yes. The browser stores the selected language locally under the crm-lang key. On the next visit from the same browser, TCRM reuses that saved preference.
++
++5. Switch between light and dark mode
++Where theme switching is available, use the Theme control to toggle between Light and Dark. The main application uses Light as the default theme.
++
++6. Does TCRM remember the theme?
++Yes. When switching is enabled, TCRM stores the selected theme in the browser under the theme key and restores it on a later visit.
++
++7. If one area does not change appearance
++Some components can have their own design tokens or may sit outside the main theme context. First confirm that the page exposes the theme toggle and is rendered inside the application ThemeProvider.
++
++Note: these stored language and theme preferences are local to the browser and are not necessarily account-wide preferences synchronized to every device.$en$,
++    'published',50,
++    'تغيير اللغة والمظهر في TCRM','Change TCRM Language and Theme',
++    'دليل العربية والإنجليزية واتجاه RTL/LTR وحفظ اللغة والوضع الفاتح والداكن في TCRM.',
++    'Guide to Arabic/English, RTL/LTR, saved language preference, and light/dark mode in TCRM.',
++    now(),'general',false,NULL,'[]'::jsonb
++  ) ON CONFLICT (tenant_id,slug) DO UPDATE SET
++    module_id=EXCLUDED.module_id,category_id=EXCLUDED.category_id,subcategory_id=EXCLUDED.subcategory_id,
++    title_ar=EXCLUDED.title_ar,title_en=EXCLUDED.title_en,excerpt_ar=EXCLUDED.excerpt_ar,excerpt_en=EXCLUDED.excerpt_en,
++    body_ar=EXCLUDED.body_ar,body_en=EXCLUDED.body_en,status=EXCLUDED.status,sort_order=EXCLUDED.sort_order,
++    seo_title_ar=EXCLUDED.seo_title_ar,seo_title_en=EXCLUDED.seo_title_en,
++    seo_description_ar=EXCLUDED.seo_description_ar,seo_description_en=EXCLUDED.seo_description_en,
++    published_at=COALESCE(kb_articles.published_at,now()),visibility_scope='general',consumer_hidden=false,
++    canonical_article_id=NULL,media=EXCLUDED.media,updated_at=now();
++
++  INSERT INTO kb_articles (
++    tenant_id,module_id,category_id,subcategory_id,slug,title_ar,title_en,excerpt_ar,excerpt_en,
++    body_ar,body_en,status,sort_order,seo_title_ar,seo_title_en,seo_description_ar,seo_description_en,
++    published_at,visibility_scope,consumer_hidden,canonical_article_id,media
++  ) VALUES (
++    owner_tenant,module_id,category_id,subcategory_id,'tcrm-notifications-settings',
++    'إعداد الإشعارات والتنبيهات في TCRM',
++    'Configuring Notifications and Alerts in TCRM',
++    'تحكم في أصوات ونوافذ إشعارات الاجتماعات والعملاء وSLA والنقل والإشارات وتحديثات النظام.',
++    'Control sound and popup behavior for meetings, lead assignment, SLA, transfers, mentions, and system alerts.',
++    $ar$تسمح صفحة Notification Settings في TCRM بالتحكم في الطريقة التي تستقبل بها عدة أنواع من التنبيهات، مع إعداد منفصل للصوت والنافذة المنبثقة لكل نوع.
++
++1. افتح إعدادات الإشعارات
++انتقل إلى صفحة Notification Settings من المسار المتاح لك في النظام. ستظهر الإعدادات المحفوظة لحسابك عند تحميل الصفحة.
++
++2. تعرف على أنواع الإشعارات
++الأنواع الحالية هي:
++• Meeting Reminders: تنبيه قبل الاجتماعات المجدولة.
++• Lead Assigned: عند تعيين عميل محتمل جديد لك.
++• SLA Breach Alerts: عند تجاوز وقت الاستجابة المحدد.
++• Lead Transfers: عند نقل عميل محتمل.
++• Mentions: عند ذكرك في الملاحظات.
++• System Notifications: التنبيهات والتحديثات العامة للنظام.
++
++3. اختر طريقة التنبيه لكل نوع
++لكل نوع يوجد مفتاحان مستقلان:
++• Sound: تشغيل أو إيقاف صوت التنبيه.
++• Popup: تشغيل أو إيقاف النافذة المنبثقة.
++يمكنك تفعيل أحدهما بدون الآخر.
++
++4. استخدم Quick Controls
++إذا أردت تغيير الجميع بسرعة، استخدم All Sounds لتفعيل أو تعطيل الأصوات لكل الأنواع، أو All Popups للتحكم في جميع النوافذ المنبثقة مرة واحدة.
++
++5. احفظ التعديلات
++بعد تغيير أي إعداد يصبح زر Save قابلًا للاستخدام. اضغطه لحفظ مجموعة التفضيلات. عند النجاح يظهر تنبيه يفيد بحفظ الإعدادات ثم يعيد النظام تحميل القيم المحفوظة.
++
++6. راجع إعدادات صوت الإشعارات
++تحت الإعدادات الأساسية توجد بطاقة Notification Sound Settings لإعدادات الصوت الإضافية المتاحة في النظام.
++
++7. إذا لم تظهر Popups
++يجب أن يسمح المتصفح بالإشعارات حتى تتمكن TCRM من إظهار النوافذ المطلوبة. إذا كانت إعدادات Popup مفعلة داخل TCRM ولا يظهر شيء، راجع أذونات الإشعارات للموقع في المتصفح.
++
++نصيحة: اترك SLA وMeeting Reminders مفعلة بالطريقة المناسبة لطبيعة عملك حتى لا تفوت الحالات الحساسة للوقت.$ar$,
++    $en$The TCRM Notification Settings page lets you control how several alert types reach you, with separate sound and popup preferences for each type.
++
++1. Open Notification Settings
++Go to the Notification Settings page from the route available to your role. TCRM loads your saved notification preferences when the page opens.
++
++2. Know the current notification types
++The available types are:
++• Meeting Reminders: alerts before scheduled meetings.
++• Lead Assigned: when a new lead is assigned to you.
++• SLA Breach Alerts: when the configured response time is exceeded.
++• Lead Transfers: when a lead is transferred.
++• Mentions: when someone mentions you in notes.
++• System Notifications: general system alerts and updates.
++
++3. Choose the delivery behavior for each type
++Every type has two independent switches:
++• Sound: turn the alert sound on or off.
++• Popup: turn the popup notification on or off.
++You can enable one without enabling the other.
++
++4. Use Quick Controls
++For a bulk change, use All Sounds to enable or disable sound for every type, and All Popups to control every popup preference at once.
++
++5. Save your changes
++After a preference changes, the Save button becomes available. Save the settings and TCRM persists the complete preference set. A success message appears and the stored values are reloaded.
++
++6. Review notification sound settings
++Below the main preference controls, TCRM includes a Notification Sound Settings card for additional sound-related configuration provided by the system.
++
++7. If popups do not appear
++Your browser must allow notifications for the site. If Popup is enabled in TCRM but you still receive nothing, check the browser notification permission for TCRM.
++
++Tip: keep SLA and Meeting Reminder alerts enabled in a form that suits your work so time-sensitive items are harder to miss.$en$,
++    'published',60,
++    'إعداد الإشعارات في TCRM','TCRM Notification Settings Guide',
++    'شرح أنواع إشعارات TCRM والتحكم في Sound وPopup والحفظ وأذونات المتصفح.',
++    'Guide to TCRM notification types, sound and popup controls, saving preferences, and browser permissions.',
++    now(),'general',false,NULL,'[]'::jsonb
++  ) ON CONFLICT (tenant_id,slug) DO UPDATE SET
++    module_id=EXCLUDED.module_id,category_id=EXCLUDED.category_id,subcategory_id=EXCLUDED.subcategory_id,
++    title_ar=EXCLUDED.title_ar,title_en=EXCLUDED.title_en,excerpt_ar=EXCLUDED.excerpt_ar,excerpt_en=EXCLUDED.excerpt_en,
++    body_ar=EXCLUDED.body_ar,body_en=EXCLUDED.body_en,status=EXCLUDED.status,sort_order=EXCLUDED.sort_order,
++    seo_title_ar=EXCLUDED.seo_title_ar,seo_title_en=EXCLUDED.seo_title_en,
++    seo_description_ar=EXCLUDED.seo_description_ar,seo_description_en=EXCLUDED.seo_description_en,
++    published_at=COALESCE(kb_articles.published_at,now()),visibility_scope='general',consumer_hidden=false,
++    canonical_article_id=NULL,media=EXCLUDED.media,updated_at=now();
++
++  INSERT INTO kb_articles (
++    tenant_id,module_id,category_id,subcategory_id,slug,title_ar,title_en,excerpt_ar,excerpt_en,
++    body_ar,body_en,status,sort_order,seo_title_ar,seo_title_en,seo_description_ar,seo_description_en,
++    published_at,visibility_scope,consumer_hidden,canonical_article_id,media
++  ) VALUES (
++    owner_tenant,module_id,category_id,subcategory_id,'tcrm-role-based-interface',
++    'فهم اختلاف واجهة TCRM حسب الدور والصلاحيات',
++    'Understanding the Role-Based TCRM Interface',
++    'لماذا تختلف لوحة البداية والقائمة والبيانات الظاهرة من مستخدم لآخر، وكيف تتعامل مع ذلك بشكل صحيح.',
++    'Understand why dashboards, navigation, and visible data differ by user role and how to work with that model.',
++    $ar$TCRM نظام يعتمد بشكل واضح على الدور والصلاحيات. لذلك لا يجب توقع أن يرى كل مستخدم نفس لوحة البداية أو نفس القائمة أو نفس نطاق البيانات.
++
++1. الدور يحدد لوحة البداية
++بعد تسجيل الدخول يستخدم النظام دور المستخدم لتحديد نقطة البداية. Business Developer يبدأ في /bd، وTechnical Account Manager في /tam-dashboard، بينما يبدأ معظم المستخدمين الآخرين في /dashboard. داخل لوحة Dashboard نفسها يوجد توجيه إضافي لـAccount Manager وAccount Manager Lead إلى لوحة AM.
++
++2. الدور يحدد عناصر القائمة
++CRMLayout يفلتر عناصر Sidebar حسب الدور. مثال: أدوات مثل Import وTrash وAudit Log موجهة للإدارة، في حين أن صفحات Sales وAM وBD وAI Staff لها قوائم صلاحيات مختلفة.
++
++3. بعض المجموعات لها قواعد وصول إضافية
++AI Staff مثال واضح: Tara وZaghloul وFelfel وDarwish وShawky وWadie ليست متاحة بالضرورة لنفس مجموعة المستخدمين. كما أن WhatsApp Accounts & QR أكثر تقييدًا من WhatsApp Inbox.
++
++4. Business Developer له نطاق تشغيل محدد
++عندما يكون المستخدم BD-only يطبق النظام قائمة مسارات مسموحة تركز على BD وTHRS وTEM والدعم والإشعارات بدل إظهار كل النظام.
++
++5. بعض الأدوار تخضع لقيود تشغيلية
++أدوار Moderator يمكن أن تُحجب عنها مسارات معينة، كما يتم إخفاء Global Search وبعض العناصر أو الـwidgets عنها وفق قواعد الوصول التشغيلية.
++
++6. البيانات نفسها قد تختلف حتى عند فتح نفس الصفحة
++على Dashboard، المدير أو Sales Manager يمكنه تحميل Team Stats بينما المستخدم الفردي يعتمد على Agent Stats. كما أن بعض الاستعلامات لا تعمل أصلًا لأدوار غير مخولة بها.
++
++7. ماذا تفعل إذا كانت شاشتك مختلفة عن شرح مستخدم آخر؟
++• تأكد من الدور المسجل على حسابك.
++• قارن الصفحة التي تستخدمها بالمسار الصحيح لدورك.
++• لا تعتبر غياب عنصر في القائمة عطلًا قبل مراجعة الصلاحية.
++• إذا كنت تحتاج وظيفة غير ظاهرة، اطلب من المسؤول مراجعة Role/Position وصلاحيات الوصول بدل محاولة تجاوزها.
++
++الخلاصة: اختلاف الواجهة مقصود في TCRM لحماية البيانات وتقديم الأدوات المناسبة لكل وظيفة. أي دليل استخدام يجب قراءته مع مراعاة دور المستخدم.$ar$,
++    $en$TCRM is strongly role- and permission-aware. You should not expect every user to have the same starting dashboard, sidebar, or data scope.
++
++1. Role controls the starting dashboard
++After sign-in, TCRM uses the user role to choose a starting point. Business Developer starts at /bd, Technical Account Manager at /tam-dashboard, and most other users at /dashboard. The Dashboard itself then redirects Account Manager and Account Manager Lead users to the AM dashboard.
++
++2. Role controls sidebar entries
++CRMLayout filters sidebar items by role. Administrative tools such as Import, Trash, and Audit Log are limited to appropriate users, while Sales, AM, BD, and AI Staff areas each use their own access lists.
++
++3. Some groups have additional access rules
++AI Staff is a clear example: Tara, Zaghloul, Felfel, Darwish, Shawky, and Wadie are not necessarily available to the same roles. WhatsApp Accounts & QR is also more restricted than the WhatsApp Inbox.
++
++4. Business Developer has a defined operating scope
++For a BD-only user, TCRM applies an allowed-route set focused on BD, THRS, TEM, support, and notification-related pages rather than exposing the full CRM.
++
++5. Some roles have operational restrictions
++Moderator roles can have blocked routes. Global Search and some widgets or navigation items can also be hidden from moderators according to the operational access policy.
++
++6. Data can differ even on the same page
++On the Dashboard, an Admin or Sales Manager can load team statistics while an individual sales user uses agent statistics. Some data queries are intentionally disabled for roles that are not authorized to use them.
++
++7. What if your screen looks different from another user's guide?
++• Confirm the role assigned to your account.
++• Make sure you are comparing the correct page for your role.
++• Do not assume a missing navigation item is a defect before checking access.
++• If you need a function you cannot see, ask an administrator to review your Role/Position and access permissions instead of trying to bypass the restriction.
++
++In short, interface differences are intentional in TCRM. They protect data and keep each role focused on the tools required for its work. Read every usage guide with the current user's role in mind.$en$,
++    'published',70,
++    'الأدوار والصلاحيات وواجهة TCRM','TCRM Roles, Permissions, and Interface',
++    'شرح تأثير الدور على Dashboard والقائمة والبيانات والوصول إلى وحدات TCRM المختلفة.',
++    'How user roles affect TCRM dashboards, navigation, visible data, and module access.',
++    now(),'general',false,NULL,'[]'::jsonb
++  ) ON CONFLICT (tenant_id,slug) DO UPDATE SET
++    module_id=EXCLUDED.module_id,category_id=EXCLUDED.category_id,subcategory_id=EXCLUDED.subcategory_id,
++    title_ar=EXCLUDED.title_ar,title_en=EXCLUDED.title_en,excerpt_ar=EXCLUDED.excerpt_ar,excerpt_en=EXCLUDED.excerpt_en,
++    body_ar=EXCLUDED.body_ar,body_en=EXCLUDED.body_en,status=EXCLUDED.status,sort_order=EXCLUDED.sort_order,
++    seo_title_ar=EXCLUDED.seo_title_ar,seo_title_en=EXCLUDED.seo_title_en,
++    seo_description_ar=EXCLUDED.seo_description_ar,seo_description_en=EXCLUDED.seo_description_en,
++    published_at=COALESCE(kb_articles.published_at,now()),visibility_scope='general',consumer_hidden=false,
++    canonical_article_id=NULL,media=EXCLUDED.media,updated_at=now();
++
++  SELECT count(*)::integer
++  INTO published_count
++  FROM kb_articles
++  WHERE tenant_id = owner_tenant
++    AND slug IN (
++      'tcrm-dashboard-overview',
++      'tcrm-navigation-sidebar',
++      'tcrm-login-account-security',
++      'tcrm-global-search',
++      'tcrm-language-theme',
++      'tcrm-notifications-settings',
++      'tcrm-role-based-interface'
++    )
++    AND status = 'published'
++    AND visibility_scope = 'general'
++    AND consumer_hidden = false
++    AND length(trim(title_ar)) > 0
++    AND length(trim(title_en)) > 0
++    AND length(trim(body_ar)) > 0
++    AND length(trim(body_en)) > 0;
++
++  IF published_count <> 7 THEN
++    RAISE EXCEPTION 'TCRMHC_PHASE1_CONTENT_VERIFY_FAILED expected=7 actual=%', published_count;
++  END IF;
++END $$;
++
++COMMIT;

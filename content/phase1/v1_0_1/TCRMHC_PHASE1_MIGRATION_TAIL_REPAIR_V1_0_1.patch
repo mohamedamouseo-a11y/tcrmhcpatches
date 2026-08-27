@@ -1,0 +1,16 @@
+diff --git a/apps/api/src/db/migrations/0011_kb_phase1_getting_started.sql b/apps/api/src/db/migrations/0011_kb_phase1_getting_started.sql
+--- a/apps/api/src/db/migrations/0011_kb_phase1_getting_started.sql
++++ b/apps/api/src/db/migrations/0011_kb_phase1_getting_started.sql
+@@ -727,3 +727,12 @@
+     AND consumer_hidden = false
+     AND length(trim(title_ar)) > 0
+     AND length(trim(title_en)) > 0
++    AND length(trim(body_ar)) > 0
++    AND length(trim(body_en)) > 0;
++
++  IF published_count <> 7 THEN
++    RAISE EXCEPTION 'TCRMHC_PHASE1_CONTENT_VERIFY_FAILED expected=7 actual=%', published_count;
++  END IF;
++END $$;
++
++COMMIT;

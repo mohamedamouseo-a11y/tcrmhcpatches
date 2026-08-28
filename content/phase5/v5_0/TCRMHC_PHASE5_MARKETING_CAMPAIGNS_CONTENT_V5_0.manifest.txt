@@ -1,0 +1,159 @@
+TCRMHC_PHASE5_MARKETING_CAMPAIGNS_CONTENT_V5_0
+Version: 5.0
+Created: 2026-08-28
+
+TARGET
+- Final repository: mohamedamouseo-a11y/TCRMHC
+- TCRMHC authoring baseline HEAD: 5af8b1d06ab3f76802706770ab764421119876ad
+- Patch repository: mohamedamouseo-a11y/tcrmhcpatches
+- Reconstruction script: content/phase5/v5_0/RECONSTRUCT.sh
+- Package parts: content/phase5/v5_0/package-parts/part-001.b64 through part-007.b64
+- Reconstructed encoded package SHA-256: 6c557aeeaad12d0f93069017476da97f37385825941702c70bce16b56dee2d46
+- Decoded gzip SHA-256: 87b2dbad79a14f673f32ed42e33b153d1df68e15edf1c6aa1894761acfe91973
+- Decoded patch SHA-256: a43171f609eb18e874b4f2468f9a4a5aa48eb1a1e435135bde0dcd580945b4fd
+
+SEQUENCING
+Phase 5 requires Phase 4 migration to already exist and be tracked successfully exactly once:
+apps/api/src/db/migrations/0014_kb_phase4_clients_operations.sql
+
+Phase 5 migration:
+apps/api/src/db/migrations/0015_kb_phase5_marketing_campaigns.sql
+
+If 0014 is absent from the production checkout or migration tracking, STOP.
+If 0015 already exists or another migration already occupies number 0015, STOP and inspect. Do not renumber blindly.
+
+PACKAGE
+The package is stored as 7 text parts. Reconstruct only with RECONSTRUCT.sh and verify all checksums before git apply.
+
+SCOPE
+Adds exactly one TCRMHC migration:
+apps/api/src/db/migrations/0015_kb_phase5_marketing_campaigns.sql
+
+Migration integrity:
+- Expected applied migration line count: 649
+- Migration SHA-256: 996b2fa2577b32be71e789576ed66022fbe86341f046b7bf89442b8412f7bcc9
+- Git patch hunk: @@ -0,0 +1,649 @@
+- Clean-repo git apply --check: PASS
+- Clean-repo git apply: PASS
+- Applied migration byte-for-byte comparison to source: PASS
+- Expected SQL tail: END $$; followed by COMMIT;
+
+HIERARCHY
+Reuses module:
+- tcrm / Tamiyouz CRM
+
+Creates or updates category:
+- slug: tcrm-marketing-campaigns
+- Arabic: التسويق والحملات
+- English: Marketing & Campaigns
+
+Creates or updates subcategory:
+- slug: tcrm-marketing-operations
+- Arabic: تشغيل التسويق والحملات
+- English: Marketing Operations
+
+ARTICLES
+Adds/updates exactly 6 published bilingual general articles:
+1. tcrm-meta-campaigns — إدارة حملات Meta وربط أدائها بنتائج CRM / Managing Meta Campaigns and CRM Outcomes
+2. tcrm-tiktok-campaigns — متابعة وإدارة حملات TikTok Ads في TCRM / Monitoring and Managing TikTok Ads Campaigns in TCRM
+3. tcrm-google-ads — إدارة أداء Google Ads وربطه بنتائج المبيعات / Managing Google Ads Performance with Sales Outcomes
+4. tcrm-snapchat-ads — متابعة حملات Snapchat Ads وقياس السحب والنتائج التجارية / Monitoring Snapchat Ads, Swipes, and Business Outcomes
+5. tcrm-linkedin-ads — إدارة حملات LinkedIn Ads وقياس أثرها على CRM / Managing LinkedIn Ads and Measuring CRM Impact
+6. tcrm-tem-email-marketing — استخدام TEM للتسويق بالبريد ومزامنة Contacts مع Mautic / Using TEM for Email Marketing and Mautic Contact Sync
+
+All six must be:
+- status=published
+- visibility_scope=general
+- consumer_hidden=false
+- Arabic title/body non-empty
+- English title/body non-empty
+- media=[]
+- plain-text compatible with TCRMHC SafeBody
+- idempotent by tenant_id + slug upsert
+
+SOURCE OF TRUTH
+Content was authored from current TCRM main behavior in:
+mohamedamouseo-a11y/TCRM-MAIN-Tamiyouz-CRM-
+
+Primary files:
+- client/src/App.tsx
+- client/src/components/CRMLayout.tsx
+- client/src/pages/MetaCampaigns.tsx
+- client/src/pages/TikTokCampaignsPage.tsx
+- client/src/pages/GoogleAdsCampaignsPage.tsx
+- client/src/pages/SnapchatCampaignsPage.tsx
+- client/src/pages/LinkedInCampaignsPage.tsx
+- client/src/pages/BD/TEMCenter.tsx
+
+VERIFIED PRODUCT BEHAVIOR REPRESENTED
+- Marketing routes: /meta-campaigns, /tiktok-campaigns, /google-ads, /snapchat-ads, /linkedin-ads, /tem
+- Marketing navigation is role-gated for Admin/SalesManager/MediaBuyer; individual ad-platform pages also enforce Admin/MediaBuyer access in current UI behavior
+- Meta: active ad account, multiple date presets/custom range, search, advanced filters, configurable columns, sync, status/budget controls, ad metrics plus CRM outcomes
+- TikTok: recent date window, analytics + snapshots + CRM merge, smart search, filters, configurable columns, sync, status/budget controls
+- Google Ads: roughly 30-day default window, snapshots + CRM outcomes, filters, sorting, configurable columns, sync, status/budget controls, CSV export
+- Snapchat Ads: Snapchat-specific Swipes/Swipe Rate/Cost per Swipe plus CRM outcomes, filters/objectives, sync, status/budget controls, CSV export
+- LinkedIn Ads: campaign type, daily/total budget, platform metrics plus CRM outcomes, filters, sync, status/budget controls, CSV export
+- TEM: Mautic health, Contacts/Segments/Campaigns/Templates/Automation/AI/Statistics tabs, controlled idempotent BD-contact sync, draft segment/template/campaign creation, TCRM source-of-truth wording, and Sending blocked safety state
+
+PRODUCTION RUNTIME
+Use the established TCRMHC production runtime:
+- PM2 process: tcrmhc-api
+- Launcher: /var/www/TCRMHC/apps/api/start-with-env.mjs
+- Environment source: /etc/tcrmhc/tcrmhc.env
+
+Never print, dump, copy, or persist secret environment values.
+
+REQUIRED EXECUTION ORDER
+1. Fresh-check TCRMHC HEAD, branch, origin, and status. Preserve newer approved commits; never reset to the authoring baseline.
+2. Verify 0014 exists and migration tracking shows exactly one successful 0014 row.
+3. Confirm 0015 does not exist and no migration-number collision is present.
+4. Fresh-fetch tcrmhcpatches and read this manifest completely.
+5. Verify exactly 7 package parts.
+6. Run RECONSTRUCT.sh and verify encoded SHA-256.
+7. Base64-decode and verify gzip SHA-256.
+8. Decompress and verify patch SHA-256.
+9. Run git apply --check against the current clean/known working tree, then git apply only if PASS.
+10. Verify migration line count=649, migration SHA-256, and SQL tail.
+11. Take the normal production PostgreSQL backup/snapshot.
+12. Run pnpm typecheck.
+13. Run pnpm db:migrate through the established production runtime environment.
+14. Verify exactly one successful migration tracking row for 0015.
+15. Run pnpm build.
+16. Verify exactly 6 Phase 5 articles and hierarchy.
+17. Run pnpm kb:ai-sync through production runtime; require failed=0.
+18. Reload only tcrmhc-api and verify HTTP health=200.
+19. Live-test hierarchy, Arabic/English article rendering, RTL/LTR, and search.
+20. Review diff/status; commit only migration 0015.
+21. Publish with the protected Developer Hub Review Push only if it can operate without writing plaintext credentials to disk.
+
+LIVE SMOKE TARGETS
+Hierarchy:
+Tamiyouz CRM -> Marketing & Campaigns -> Marketing Operations
+
+Open at minimum:
+- tcrm-meta-campaigns in Arabic and English
+- tcrm-tiktok-campaigns
+- tcrm-google-ads
+- tcrm-snapchat-ads
+- tcrm-linkedin-ads
+- tcrm-tem-email-marketing
+
+Search:
+Arabic: التسويق والحملات
+Arabic: حملات Meta
+Arabic: التسويق بالبريد
+English: marketing campaigns
+English: Google Ads
+English: Mautic
+
+SECURITY / SCOPE
+- Do not modify TCRM main or the TCRM database.
+- Do not commit backups, logs, temporary decoded patches, package parts, runtime files, or unrelated work into TCRMHC.
+- Do not print or persist production secrets.
+- Do not decrypt the Developer Hub PAT into a plaintext credential store.
+- Do not use credential.helper=store.
+- If Developer Hub push cannot authenticate securely, STOP after creating the local reviewed commit and report the push blocker.
+- Final TCRMHC commit scope must contain only apps/api/src/db/migrations/0015_kb_phase5_marketing_campaigns.sql
+
+FINAL COMMIT MESSAGE
+feat: complete TCRMHC Phase 5 Marketing & Campaigns Content V5.0

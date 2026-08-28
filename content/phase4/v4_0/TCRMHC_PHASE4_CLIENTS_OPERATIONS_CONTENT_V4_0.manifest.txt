@@ -1,0 +1,157 @@
+TCRMHC_PHASE4_CLIENTS_OPERATIONS_CONTENT_V4_0
+Version: 4.0
+Created: 2026-08-28
+
+TARGET
+- Final repository: mohamedamouseo-a11y/TCRMHC
+- TCRMHC authoring baseline HEAD: 23eb8a6deba3b410547b7cf4d4308fbe67b0ea10
+- Patch repository: mohamedamouseo-a11y/tcrmhcpatches
+- Reconstruction script: content/phase4/v4_0/RECONSTRUCT.sh
+- Package parts: content/phase4/v4_0/package-parts/part-001.b64 through part-011.b64
+- Reconstructed encoded package SHA-256: db86ef15743a9ad1150654980c442cdb559878219cb35f9caabe7b69438dea8b
+- Decoded gzip SHA-256: dfe37c41b2b77613f52cdc27df8c00cd525abd25e9609cb77e0112986d865ec1
+- Decoded patch SHA-256: 885e47e09b73e25b8c3e0e2e5adb0b48c78af5693f20175eec7e3e6c25e7fa65
+
+IMPORTANT SEQUENCING NOTE
+At authoring time TCRMHC/main does not yet contain Phase 3 migration:
+apps/api/src/db/migrations/0013_kb_phase3_business_development.sql
+
+Phase 4 is numbered 0014 and MUST NOT be migrated or pushed as completed until Phase 3 is present in the TCRMHC production checkout and migration tracking confirms 0013 completed successfully exactly once.
+
+It is safe to prepare/reconstruct/check this Phase 4 patch now. If 0013 is absent at execution time, STOP before applying or migrating Phase 4 and report the Phase 3 prerequisite as missing. Do not renumber Phase 4 and do not reset newer TCRMHC UX work.
+
+PACKAGE NOTE
+The package is intentionally stored as 11 small text parts. There is no valid monolithic package file in the repository. Always reconstruct with RECONSTRUCT.sh and verify all checksums before git apply.
+
+SCOPE
+Adds exactly one TCRMHC migration:
+apps/api/src/db/migrations/0014_kb_phase4_clients_operations.sql
+
+Migration integrity:
+- Expected applied migration line count: 1091
+- Migration SHA-256: a90687a5c74777ed9add429c848e6d8a9c7dc6952c1e8157d6aa1514d742ac5b
+- Generated with git diff; hunk header: @@ -0,0 +1,1091 @@
+- Clean-repo git apply --check: PASS
+- Clean-repo git apply: PASS
+- Applied migration byte-for-byte comparison to source: PASS
+- Expected SQL tail: END $$; followed by COMMIT;
+
+HIERARCHY
+Reuses existing module:
+- tcrm / Tamiyouz CRM
+
+Creates or updates category:
+- slug: tcrm-clients-operations
+- Arabic: العملاء والعمليات
+- English: Clients & Operations
+
+Creates or updates subcategory:
+- slug: tcrm-client-operations-core
+- Arabic: تشغيل العملاء والعمليات
+- English: Client Operations
+
+ARTICLES
+Adds/updates exactly 8 published bilingual general articles:
+1. tcrm-clients-pool — إدارة Client Pool والعملاء في TCRM / Managing the Client Pool in TCRM
+2. tcrm-client-profile — استخدام ملف العميل وإدارة بياناته التشغيلية / Using the Client Profile and Operational Client Record
+3. tcrm-client-workflow — تشغيل Workflow العميل وتسليم الخدمات / Running the Client Workflow and Service Handover
+4. tcrm-workflow-dashboard — استخدام Unified Workflow Dashboard لمتابعة التشغيل / Using the Unified Workflow Dashboard for Operations
+5. tcrm-renewals-pipeline — إدارة التجديدات في Renewal Pipeline / Managing Renewals in the Renewal Pipeline
+6. tcrm-am-dashboard — استخدام Account Management Dashboard لمتابعة العملاء / Using the Account Management Dashboard
+7. tcrm-tam-dashboard — استخدام TAM Dashboard لمتابعة حالات التدخل الفني / Using the TAM Dashboard for Technical Account Intervention
+8. tcrm-csat-survey — إرسال تقييم رضا العميل CSAT / Submitting a Client CSAT Satisfaction Survey
+
+All eight must be:
+- status=published
+- visibility_scope=general
+- consumer_hidden=false
+- Arabic title/body non-empty
+- English title/body non-empty
+- plain-text compatible with TCRMHC SafeBody
+- searchable through existing KB search
+- idempotent by tenant_id + slug upsert
+
+SOURCE OF TRUTH
+Content was authored from current TCRM main behavior in mohamedamouseo-a11y/TCRM-MAIN-Tamiyouz-CRM-, primarily:
+- client/src/App.tsx
+- client/src/pages/ClientPool.tsx
+- client/src/pages/ClientProfile.tsx
+- client/src/pages/ClientWorkflow.tsx
+- client/src/pages/WorkflowDashboard.tsx
+- client/src/pages/RenewalPipeline.tsx
+- client/src/pages/AMDashboard.tsx
+- client/src/pages/TAMDashboard.tsx
+- client/src/pages/CSATSurvey.tsx
+
+VERIFIED PRODUCT BEHAVIOR REPRESENTED
+- /clients Client Pool status summaries, search, voice search, operational filters, add-client flow, TOS sync/resync and Excel export
+- /clients/:id profile tabs: Overview, Meetings, Handover, Onboarding, History, Contracts, Follow-ups and Tasks
+- Client Handover three-step structure: TOS Project Team, Sales Handover Brief, Account Manager Client Brief
+- /clients/:id/workflow dynamic service handovers, notes, files, 20MB upload gate, required-field validation and task generation
+- /workflow-dashboard 60-second refresh, handover quality, AM operations, management performance, bottlenecks, task table and deadline automation
+- /renewals automatic Overdue/30/60/90-day buckets, manual Contacted/Negotiation/Sent Offer/Renewed/Lost stages, drag/drop and required lost reason
+- /am-dashboard role-scoped My/Team views, current-month default range, portfolio filters, briefs/contracts and health-score operations
+- /tam-dashboard and /operations-dashboard KPI/recovery monitoring and Recent TAM Leads
+- /csat/:clientId 1-to-5 score, optional feedback, submit and success flow
+
+PRODUCTION RUNTIME
+Use the existing TCRMHC production runtime and environment already verified in prior phases.
+Known API PM2 process:
+- tcrmhc-api
+Known launcher:
+- /var/www/TCRMHC/apps/api/start-with-env.mjs
+Existing production environment source:
+- /etc/tcrmhc/tcrmhc.env
+
+Never print, dump, copy, or persist secret environment values.
+
+REQUIRED EXECUTION ORDER
+1. Verify fresh TCRMHC HEAD, branch, remote, and status. Do not reset newer approved changes.
+2. Verify Phase 3 file 0013 exists and migration tracking confirms exactly one successful 0013 row. If not, STOP.
+3. Confirm Phase 4 migration 0014 is absent.
+4. Fresh-fetch tcrmhcpatches and read this manifest.
+5. Run RECONSTRUCT.sh and verify reconstructed encoded SHA-256.
+6. Base64-decode and verify gzip SHA-256.
+7. Decompress and verify decoded patch SHA-256.
+8. Run git apply --check, then git apply.
+9. Verify migration line count=1091, migration SHA-256, and SQL tail.
+10. Take normal production PostgreSQL backup/snapshot.
+11. Run pnpm typecheck.
+12. Run pnpm db:migrate through the established production runtime environment.
+13. Verify exactly one successful tracking row for 0014.
+14. Run pnpm build.
+15. Verify exactly 8 Phase 4 articles and the hierarchy.
+16. Run pnpm kb:ai-sync through production runtime; require failed=0.
+17. Reload existing TCRMHC service and verify HTTP 200 health.
+18. Live-test hierarchy, representative Arabic/English articles, RTL/LTR, rendering, and search.
+19. Review diff/status; commit only migration 0014 and publish through existing protected Developer Hub Review Push to TCRMHC/main.
+
+LIVE SMOKE TARGETS
+Hierarchy:
+Tamiyouz CRM -> Clients & Operations -> Client Operations
+
+Open at minimum:
+- tcrm-clients-pool in Arabic and English
+- tcrm-client-profile
+- tcrm-client-workflow
+- tcrm-renewals-pipeline
+- tcrm-am-dashboard
+- tcrm-tam-dashboard
+- tcrm-csat-survey
+
+Search:
+Arabic: العملاء والعمليات
+Arabic: التجديدات
+Arabic: تسليم الخدمات
+English: client workflow
+English: account management
+English: CSAT
+
+SECURITY / SCOPE
+- Do not modify TCRM main or the TCRM database.
+- Do not commit backups, logs, temporary decoded patches, package parts, or unrelated work into TCRMHC.
+- Do not print or persist production secrets.
+- Final TCRMHC commit scope must contain only apps/api/src/db/migrations/0014_kb_phase4_clients_operations.sql
+
+FINAL COMMIT MESSAGE
+feat: complete TCRMHC Phase 4 Clients & Operations Content V4.0

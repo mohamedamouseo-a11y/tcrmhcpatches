@@ -1,0 +1,170 @@
+TCRMHC PHASE 14 — ZAGHLOUL WHATSAPP CRM, AUTOMATION & AI V14.0
+================================================================
+
+PURPOSE
+-------
+Publish source-grounded Help Center documentation for the current Zaghloul WhatsApp CRM application in TCRM.
+This phase upgrades the shallow existing Zaghloul AI Staff article and adds eight deep-dive articles without replacing the older generic WhatsApp Operations articles.
+
+SOURCE OF TRUTH
+---------------
+Repository: mohamedamouseo-a11y/TCRM-MAIN-Tamiyouz-CRM-
+Branch: main
+Source HEAD reviewed: 3e12ab8e53c0b7d414a10e323ebb98d1eb568626
+Source application: apps/zaghloul-wacrm
+IMPORTANT: TCRM main is read-only for this content workflow. Do not modify or push to it.
+
+TARGET
+------
+Production checkout: /var/www/TCRMHC
+Final repository: mohamedamouseo-a11y/TCRMHC
+Branch: main
+Expected TCRMHC base HEAD when authored: 27cbb77ecf05887eaa7710b912ab882933c9fad2
+Previous phase: Phase 13 — Wadie Optimization & Learning V13.0
+
+DEPLOYMENT ARTIFACT
+-------------------
+Patch repository: mohamedamouseo-a11y/tcrmhcpatches
+Path: content/phase14/v14_0/0025_kb_phase14_zaghloul_whatsapp_crm.sql
+Target path: apps/api/src/db/migrations/0025_kb_phase14_zaghloul_whatsapp_crm.sql
+Line count: 593
+SHA-256: 232e1a2e949aac4620d2583829235ab96aaa74e9bc6c67ae6daf9492c0d28113
+Expected tail:
+  END $$;
+
+  COMMIT;
+
+LOCAL ARTIFACT VALIDATION
+-------------------------
+A generated git patch was tested against a clean repository before publication.
+Local validation patch SHA-256: cba3e1be81e6f7c1812646cd13199c3654a94063dd4fe5a7b69e0d471c503e35
+Validation results:
+- git apply --check: PASS
+- git apply: PASS
+- resulting migration line count: 593
+- resulting migration SHA-256: 232e1a2e949aac4620d2583829235ab96aaa74e9bc6c67ae6daf9492c0d28113
+- byte-for-byte migration integrity: PASS
+The deployment artifact is the SQL file above; Manus must not manually rewrite it.
+
+KNOWLEDGE HIERARCHY
+-------------------
+Module: tcrm
+Existing category required: tcrm-ai-staff
+Phase 14 subcategory:
+- slug: tcrm-zaghloul-wacrm
+- Arabic: Zaghloul - واتساب CRM والأتمتة
+- English: Zaghloul - WhatsApp CRM & Automation
+
+ARTICLE SET — EXACTLY 9
+-----------------------
+1. tcrm-ai-staff-zaghloul
+2. tcrm-zaghloul-inbox-realtime
+3. tcrm-zaghloul-contacts
+4. tcrm-zaghloul-broadcasts
+5. tcrm-zaghloul-automations
+6. tcrm-zaghloul-flows
+7. tcrm-zaghloul-pipelines-deals
+8. tcrm-zaghloul-ai-agents
+9. tcrm-zaghloul-whatsapp-cloud-setup
+
+For all nine articles verify:
+- status = published
+- visibility_scope = general
+- consumer_hidden = false
+- Arabic title/body are non-empty
+- English title/body are non-empty
+
+SCOPE GROUNDED IN CURRENT TCRM IMPLEMENTATION
+---------------------------------------------
+- Zaghloul dashboard metrics, conversation trends, pipeline distribution, response time, activity feed, quick actions.
+- Realtime Inbox, conversation deep links, contact context, unread state, reconnect/visibility resync, account-scoped WhatsApp connection state.
+- Contacts search, pagination, tag filtering, import, custom fields, page-scoped bulk actions and permission gates.
+- Broadcast wizard: Template -> Audience -> Personalize -> Send; all/tags/custom-field/CSV audiences; exclusions; draft behavior.
+- Automations: Welcome Message, Out of Office, Lead Qualifier, Follow-up Reminder templates; activation, edit, duplicate, logs, delete.
+- Flows Beta: blank/template creation; keyword, first inbound message and manual triggers; draft/active/archived states.
+- Pipelines and Deals: default Sales Pipeline stages, deal movement, analytics, settings and separated permission gates.
+- AI Agents: Bring Your Own Key, Setup, Playground and role-gated Usage.
+- WhatsApp Cloud configuration: Phone Number ID, WABA ID, Access Token, Verify Token, PIN, server-side verification/encryption, registration checks, webhook and inbound-media setting.
+
+NON-DUPLICATION NOTE
+--------------------
+Existing Phase 7 WhatsApp Operations documentation covers only the generic overview, inbox, and account/QR setup articles. Phase 14 documents the current Zaghloul standalone WhatsApp CRM application and WhatsApp Cloud API configuration. Do not remove or overwrite unrelated Phase 7 articles.
+
+DATABASE SAFETY
+---------------
+- Take the normal production PostgreSQL backup/snapshot before migration.
+- Do not access or modify the TCRM application database.
+- Run only against the TCRMHC database using the existing project migration workflow.
+- The SQL includes an internal verification gate requiring exactly 9 valid published Phase 14 article rows.
+- Migration tracking must contain exactly one row for 0025_kb_phase14_zaghloul_whatsapp_crm.sql after success.
+
+VALIDATION ORDER
+----------------
+1. Verify production git state and preserve unrelated changes.
+2. Verify deployment artifact SHA-256, line count and SQL tail.
+3. Copy the exact SQL artifact to the target migration path; do not rewrite it.
+4. git diff --check
+5. Production DB backup/snapshot.
+6. pnpm typecheck
+7. pnpm db:migrate
+8. pnpm build
+9. Verify hierarchy and exact 9-row article set.
+10. Verify migration tracking.
+11. pnpm kb:ai-sync — Phase 14 gate requires failed=0.
+12. Restart/reload using the existing production service/deployment process.
+13. Verify production health HTTP 200.
+14. Perform authenticated Arabic/English Help Center smoke and search tests.
+15. Commit only the Phase 14 migration and push from the production system through the existing Developer Hub / Review Push workflow to TCRMHC/main.
+
+LIVE SMOKE TEST MINIMUM
+-----------------------
+Confirm the Zaghloul subcategory is visible under TCRM AI Staff and all 9 articles are present.
+Open at minimum:
+- tcrm-ai-staff-zaghloul
+- tcrm-zaghloul-broadcasts
+- tcrm-zaghloul-ai-agents
+- tcrm-zaghloul-whatsapp-cloud-setup
+Verify Arabic RTL, English LTR, readable article bodies, and no raw Markdown/HTML artifacts.
+
+SEARCH TESTS
+------------
+Arabic examples:
+- زغلول
+- حملات واتساب
+- الأتمتة
+English examples:
+- Zaghloul
+- WhatsApp Cloud
+- AI Agents
+- broadcast
+Relevant Phase 14 articles must be returned.
+
+FINAL COMMIT
+------------
+Recommended commit message:
+feat: complete TCRMHC Phase 14 Zaghloul WhatsApp CRM V14.0
+
+FINAL REPORT REQUIRED
+---------------------
+Return:
+- freshly fetched tcrmhcpatches HEAD
+- artifact SHA-256 / expected SHA-256 match
+- migration line-count and tail verification
+- TCRMHC pre-apply HEAD and initial git status
+- DB backup metadata (sanitized)
+- typecheck result
+- db:migrate result
+- build result
+- exact 9-row DB verification
+- hierarchy verification
+- migration-tracking verification
+- kb:ai-sync totals and failed count
+- restart / HTTP health result
+- Arabic + English smoke results
+- Arabic + English search results
+- final TCRMHC commit SHA pushed from system
+- confirmation local HEAD equals GitHub TCRMHC/main
+- final git status --short
+- any unrelated pre-existing changes preserved
+
+Do not mark Phase 14 complete unless all gates pass and the final system commit is pushed to mohamedamouseo-a11y/TCRMHC main.

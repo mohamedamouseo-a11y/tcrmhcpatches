@@ -1,0 +1,132 @@
+TCRMHC Phase 15 — Tara Telesales, Qualification & Conversation Moderation V15.0
+
+PHASE=15
+VERSION=15.0
+MIGRATION=0026_kb_phase15_tara_operations.sql
+
+SOURCE_REPOSITORY=mohamedamouseo-a11y/TCRM-MAIN-Tamiyouz-CRM-
+SOURCE_BRANCH=main
+SOURCE_HEAD=657b6c8a28cd50c7bef6c844c675a376563ec9e4
+
+TARGET_REPOSITORY=mohamedamouseo-a11y/TCRMHC
+TARGET_BRANCH=main
+TARGET_BASE=10c050635c63f49aea1747b5a1724ddd960b2ced
+
+PATCH_REPOSITORY=mohamedamouseo-a11y/tcrmhcpatches
+PATCH_PATH=content/phase15/v15_0/0026_kb_phase15_tara_operations.sql
+
+MIGRATION_LINES=501
+MIGRATION_SHA256=14eba33dfdb6c1fb89cf102e635b9de36985128f9601659500aef358f24b3d65
+EXPECTED_ARTICLE_COUNT=10
+
+HIERARCHY_MODULE=tcrm
+HIERARCHY_CATEGORY=tcrm-ai-staff
+HIERARCHY_SUBCATEGORY=tcrm-tara-operations
+HIERARCHY_TITLE_AR=Tara - المبيعات والتأهيل والإشراف على المحادثات
+HIERARCHY_TITLE_EN=Tara - Telesales, Qualification & Conversation Moderation
+
+ARTICLE_SLUGS:
+1. tcrm-ai-staff-tara
+2. tcrm-tara-operations
+3. tcrm-tara-campaigns-qualification
+4. tcrm-tara-knowledge-followups
+5. tcrm-tara-moderator-workspace
+6. tcrm-tara-moderator-management
+7. tcrm-tara-social-channels-meta
+8. tcrm-tara-tiktok-business-messaging
+9. tcrm-tara-voice-elevenlabs
+10. tcrm-tara-ai-providers
+
+SOURCE_GROUNDING:
+- client/src/pages/TaraAgentPage.tsx
+- client/src/components/tara/TaraModeratorOperations.tsx
+- client/src/components/tara/TaraModeratorWorkspace.tsx
+- client/src/components/tara/TaraModeratorManagementPanel.tsx
+- client/src/components/tara/TaraSocialChannelsPanel.tsx
+- client/src/components/tara/TaraTikTokBusinessMessagingPanel.tsx
+- client/src/components/tara/TaraVoiceSettingsPanel.tsx
+- client/src/components/tara/TaraProviderSettingsPanel.tsx
+
+SOURCE_CONFIRMED_SCOPE:
+- Tara identifies as AI Telesales & Lead Qualification Specialist.
+- Access is role-aware; Moderator receives a dedicated operational/conversation workspace.
+- Admin Tara workspace exposes Settings, AI Providers, Voice & ElevenLabs, Moderator, Campaigns, Qualification, Follow-ups, Social Channels, Knowledge, Test, and Logs.
+- Campaign settings include CRM campaign linkage, stages, tags, assignment, auto-create Lead, handoff rules, metadata matchers, and priority.
+- Qualification fields include questions, required state, options, CRM field target, order, and active state.
+- Knowledge and follow-up rules can be global or campaign-scoped.
+- Moderator workspace supports reply generation/review/send, retry, per-conversation Tara enable/disable, human handoff, notes, and WhatsApp Evolution operations.
+- Moderator management supports all-account or scoped account access and protects privileged admin roles from Moderator-role conversion.
+- Social channels include Messenger, Instagram Direct, Facebook/Instagram comments, and TikTok; Meta settings support OAuth and connection testing.
+- TikTok uses official Business Messaging API and requires approved scopes; it supports OAuth, webhook registration, connection test, and token-expiry visibility.
+- Tara Voice uses ElevenLabs with STT/TTS, voice catalog/preview, account and conversation settings, activation-readiness tests, and multiple response modes.
+- AI Providers support OpenAI, Gemini, Claude, Agnes, and Custom OpenAI-compatible provider with primary/fallback ordering and connection tests.
+
+NON_DUPLICATION:
+Phase 6 only included a shallow article tcrm-ai-staff-tara describing Tara as a lead-source analyzer.
+Phase 15 intentionally upgrades that same slug and adds detailed, source-grounded Tara operational articles.
+No Phase 14 Zaghloul content is modified.
+
+DB_SAFETY:
+- Idempotent upserts.
+- Requires active tcrm module and tcrm-ai-staff category.
+- Does not delete unrelated articles.
+- Does not modify TCRM production database.
+- Internal verification requires exactly 10 published/general/non-hidden target articles with nonempty Arabic and English titles/bodies.
+
+DEPLOYMENT_REQUIREMENTS:
+1. Fresh-fetch this patch repository.
+2. Verify migration SHA256 and line count before copying.
+3. Verify /var/www/TCRMHC is aligned with current TCRMHC/main before applying.
+4. Verify repository and .git ownership/writability for PM2 runtime user tcrmhc before Git operations.
+5. Preserve unrelated production changes; no force reset over unknown work.
+6. Take PostgreSQL production backup before migration.
+7. Copy exact migration into apps/api/src/db/migrations/.
+8. git diff --check must pass.
+9. pnpm typecheck must pass.
+10. pnpm db:migrate must pass.
+11. pnpm build must pass.
+12. Verify exactly 10 target articles and hierarchy.
+13. Verify migration tracking.
+14. Run pnpm kb:ai-sync with production environment; AI_SYNC_FAILED must be 0.
+15. Restart/reload existing PM2 service as required and verify API health HTTP 200.
+16. Perform authenticated Arabic and English render smoke tests.
+17. Search Arabic: تارا, تأهيل العملاء, مودريتور, قنوات اجتماعية.
+18. Search English: Tara, lead qualification, Moderator, TikTok Business Messaging, ElevenLabs.
+19. Commit ONLY the 0026 migration in TCRMHC.
+20. Commit message: feat: complete TCRMHC Phase 15 Tara Operations V15.0
+21. Push via TCRMHC Developer Hub/system GitHub authentication; do not require a shell PAT and do not force push.
+22. Final local HEAD must equal remote main and worktree must be clean.
+
+FINAL_REPORT_REQUIRED:
+PATCH_REPO_HEAD
+ARTIFACT_SHA256
+ARTIFACT_SHA_MATCH
+MIGRATION_LINES
+SQL_TAIL_OK
+TCRMHC_PRE_APPLY_HEAD
+INITIAL_GIT_STATUS
+RUNTIME_GIT_OWNERSHIP_OK
+DB_BACKUP
+TYPECHECK
+DB_MIGRATE
+BUILD
+ARTICLE_COUNT
+ARTICLE_VALIDATION
+HIERARCHY_VALIDATION
+MIGRATION_TRACKED
+AI_SYNC_TOTAL
+AI_SYNC_SYNCED
+AI_SYNC_SKIPPED
+AI_SYNC_FAILED
+RESTART
+API_HEALTH
+ARABIC_SMOKE
+ENGLISH_SMOKE
+ARABIC_SEARCH
+ENGLISH_SEARCH
+FINAL_TCRMHC_COMMIT
+SYSTEM_PUSH
+LOCAL_REMOTE_MATCH
+FINAL_GIT_STATUS
+UNRELATED_CHANGES_PRESERVED
+DONE

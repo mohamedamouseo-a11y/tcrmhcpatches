@@ -1,0 +1,143 @@
+TCRMHC Phase 16 — Shawky Social Media Operations, Postiz & Publishing V16.0
+
+PHASE=16
+VERSION=16.0
+MIGRATION=0027_kb_phase16_shawky_social_operations.sql
+
+SOURCE_REPOSITORY=mohamedamouseo-a11y/TCRM-MAIN-Tamiyouz-CRM-
+SOURCE_BRANCH=main
+SOURCE_HEAD=3e10689b39223cc6bfced69ce05cfcc121a2a1b6
+
+TARGET_REPOSITORY=mohamedamouseo-a11y/TCRMHC
+TARGET_BRANCH=main
+TARGET_BASE=0a83406de468c08d7b7305603230d8df0b00a9de
+
+PATCH_REPOSITORY=mohamedamouseo-a11y/tcrmhcpatches
+PATCH_PATH=content/phase16/v16_0/0027_kb_phase16_shawky_social_operations.sql
+
+MIGRATION_LINES=478
+MIGRATION_SHA256=28a1ab18feeb6573c5a7707e63c0bffa63826cfc4e2331e21b5742cb20882d4e
+EXPECTED_ARTICLE_COUNT=9
+
+HIERARCHY_MODULE=tcrm
+HIERARCHY_CATEGORY=tcrm-ai-staff
+HIERARCHY_SUBCATEGORY=tcrm-shawky-social-operations
+HIERARCHY_TITLE_AR=Shawky - السوشيال ميديا والنشر
+HIERARCHY_TITLE_EN=Shawky - Social Media Operations & Publishing
+
+ARTICLE_SLUGS:
+1. tcrm-ai-staff-shawky
+2. tcrm-shawky-dashboard-runtime
+3. tcrm-shawky-accounts-oauth
+4. tcrm-shawky-content-composer
+5. tcrm-shawky-media-upload
+6. tcrm-shawky-drafts-scheduling
+7. tcrm-shawky-content-calendar
+8. tcrm-shawky-publish-now-confirmation
+9. tcrm-shawky-access-security
+
+SOURCE_GROUNDING:
+- client/src/pages/ShawkyPage.tsx
+- client/src/components/shawky/ShawkyComposer.tsx
+- server/services/shawky/shawkyRouter.ts
+- server/services/shawky/shawkyPostizApiService.ts
+- server/services/shawky/shawkyPublishConfirmationStore.ts
+- server/routes/shawkyOAuth.ts
+- server/routes/shawkyMedia.ts
+- services/shawky/runtime/docker-compose.yml
+
+SOURCE_CONFIRMED_SCOPE:
+- Shawky identifies as an AI Social Media Specialist inside TCRM.
+- Shawky uses a Postiz runtime and exposes live runtime health, connected-account, post, and summary data.
+- Dashboard metrics include connected accounts, scheduled posts, published posts, drafts, and engine state.
+- The default UI range is the previous 30 days; backend date-range validation caps requests at 93 days.
+- Content and Calendar consume live Postiz data and explicitly show unavailable/empty states instead of fabricated placeholder data.
+- Social Accounts supports configured OAuth providers including Facebook, Instagram, LinkedIn, TikTok, X, and YouTube variants.
+- Meta OAuth can require explicit account selection before completing the connection.
+- The Content Composer supports text, account selection, media, Save Draft, Schedule, and Publish Now.
+- Composer validation allows at most 5,000 text characters, 12 unique social account integrations, and 10 media items.
+- Images support JPEG/PNG/GIF/WebP/AVIF/BMP/TIFF up to 10 MB; video is MP4 up to 1 GB.
+- Media upload requires Admin authentication and same-origin requests, uses the server-side Postiz API key, and validates the returned HTTPS public media URL.
+- Scheduling requires a valid future time.
+- Immediate publishing is protected by an explicit confirmation gate.
+- Publish confirmations expire after 10 minutes, are bound to the initiating user, and are consumed before the outbound publish request to reduce duplicate-post risk.
+- Shawky router access is Admin-only.
+- Postiz runtime URL is restricted to loopback hosts and Postiz credentials remain server-side.
+- Analytics, AI, and Settings are currently pending workspaces and are not documented as completed live functionality.
+
+NON_DUPLICATION:
+- Phase 15 is Tara Operations and does not cover Shawky.
+- No dedicated Shawky migration exists in the completed Phase 12–15 sequence.
+- Phase 16 creates or updates only the nine listed Shawky article slugs and does not modify Tara, Zaghloul, Wadie, or Darwish articles.
+
+DB_SAFETY:
+- Idempotent upserts.
+- Requires active tcrm module and tcrm-ai-staff category.
+- Does not delete unrelated articles.
+- Does not modify the TCRM application database.
+- Internal verification requires exactly 9 published/general/non-hidden target articles with nonempty Arabic and English titles/bodies.
+
+DEPLOYMENT_REQUIREMENTS:
+1. Fresh-fetch this patch repository; do not use a cached copy.
+2. Verify migration SHA256 and line count before copying.
+3. Verify /var/www/TCRMHC is aligned with current TCRMHC/main before applying.
+4. If TCRMHC/main is newer than TARGET_BASE, inspect newer commits and stop on a conflicting 0027/Phase 16; do not blindly reset.
+5. Preserve unrelated production changes and do not force-reset unknown work.
+6. Verify repository and .git ownership/writability for PM2 runtime user tcrmhc before Git operations.
+7. Take a PostgreSQL production backup before migration.
+8. Copy the exact migration byte-for-byte into apps/api/src/db/migrations/.
+9. git diff --check must pass.
+10. pnpm typecheck must pass.
+11. pnpm db:migrate must pass.
+12. pnpm build must pass.
+13. Verify exactly 9 target articles and the expected hierarchy.
+14. Verify migration tracking contains 0027_kb_phase16_shawky_social_operations.sql exactly once as successful.
+15. Run pnpm kb:ai-sync using the production environment; AI_SYNC_FAILED must be 0.
+16. Restart/reload the existing TCRMHC PM2/service configuration as required and verify API health HTTP 200.
+17. Perform authenticated Arabic and English rendering smoke tests, RTL/LTR checks, and verify no raw Markdown or HTML artifacts.
+18. Search Arabic using real single-token terms: شوقي, السوشيال, النشر, جدولة.
+19. Search English: Shawky, Postiz, OAuth, Publish Now, Content Calendar.
+20. Commit ONLY apps/api/src/db/migrations/0027_kb_phase16_shawky_social_operations.sql.
+21. Commit message: feat: complete TCRMHC Phase 16 Shawky Social Operations V16.0
+22. Push via the existing TCRMHC Developer Hub/system GitHub authentication; do not configure a shell PAT and do not force push.
+23. After push, verify local HEAD equals remote main and the worktree is clean.
+
+FINAL_REPORT_REQUIRED:
+PATCH_REPO_HEAD
+ARTIFACT_SHA256
+ARTIFACT_SHA_MATCH
+MIGRATION_LINES
+SQL_TAIL_OK
+TCRMHC_PRE_APPLY_HEAD
+INITIAL_GIT_STATUS
+RUNTIME_GIT_OWNERSHIP_OK
+DB_BACKUP
+TYPECHECK
+DB_MIGRATE
+BUILD
+ARTICLE_COUNT
+ARTICLE_VALIDATION
+HIERARCHY_VALIDATION
+MIGRATION_TRACKED
+AI_SYNC_TOTAL
+AI_SYNC_SYNCED
+AI_SYNC_SKIPPED
+AI_SYNC_FAILED
+RESTART
+API_HEALTH
+ARABIC_SMOKE
+ENGLISH_SMOKE
+RTL_SMOKE
+LTR_SMOKE
+NO_RAW_MD_SMOKE
+NO_RAW_HTML_SMOKE
+ARABIC_SEARCH
+ENGLISH_SEARCH
+FINAL_TCRMHC_COMMIT
+COMMIT_MESSAGE
+SYSTEM_PUSH
+REMOTE_HEAD
+LOCAL_REMOTE_MATCH
+FINAL_GIT_STATUS
+UNRELATED_CHANGES_PRESERVED
+DONE

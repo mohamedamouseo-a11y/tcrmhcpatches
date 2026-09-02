@@ -15,8 +15,9 @@ TARGET_BASE=0a83406de468c08d7b7305603230d8df0b00a9de
 PATCH_REPOSITORY=mohamedamouseo-a11y/tcrmhcpatches
 PATCH_PATH=content/phase16/v16_0/0027_kb_phase16_shawky_social_operations.sql
 
-MIGRATION_LINES=478
-MIGRATION_SHA256=28a1ab18feeb6573c5a7707e63c0bffa63826cfc4e2331e21b5742cb20882d4e
+MIGRATION_LINES=417
+MIGRATION_SHA256=REPORT_AFTER_FETCH
+MIGRATION_GIT_BLOB_SHA1=e40cc55fb0ff31749e2b70a5ec855fcac38ad26e
 EXPECTED_ARTICLE_COUNT=9
 
 HIERARCHY_MODULE=tcrm
@@ -79,7 +80,7 @@ DB_SAFETY:
 
 DEPLOYMENT_REQUIREMENTS:
 1. Fresh-fetch this patch repository; do not use a cached copy.
-2. Verify migration SHA256 and line count before copying.
+2. Verify the migration Git blob SHA1 and line count before copying; calculate SHA256 after fetch and include it in the final report.
 3. Verify /var/www/TCRMHC is aligned with current TCRMHC/main before applying.
 4. If TCRMHC/main is newer than TARGET_BASE, inspect newer commits and stop on a conflicting 0027/Phase 16; do not blindly reset.
 5. Preserve unrelated production changes and do not force-reset unknown work.
@@ -104,8 +105,9 @@ DEPLOYMENT_REQUIREMENTS:
 
 FINAL_REPORT_REQUIRED:
 PATCH_REPO_HEAD
+ARTIFACT_GIT_BLOB_SHA1
+ARTIFACT_GIT_BLOB_MATCH
 ARTIFACT_SHA256
-ARTIFACT_SHA_MATCH
 MIGRATION_LINES
 SQL_TAIL_OK
 TCRMHC_PRE_APPLY_HEAD
